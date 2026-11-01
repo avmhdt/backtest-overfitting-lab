@@ -84,9 +84,9 @@ def return_moments(returns: ArrayLike) -> ReturnMoments:
 
     Examples
     --------
-    >>> m = return_moments([0.01, -0.01, 0.01, -0.01])
-    >>> round(m.skew, 6), round(m.kurtosis, 6), m.n_obs
-    (0.0, 1.0, 4)
+    >>> m = return_moments([0.01, -0.03, 0.01, 0.01])
+    >>> round(m.skew, 3), round(m.kurtosis, 3), m.n_obs
+    (-1.155, 2.333, 4)
     """
     arr = as_vector(returns, name="returns")
     if arr.size < 2:
