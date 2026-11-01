@@ -1,0 +1,2 @@
+run_id,timestamp,git_sha,strategy_family,params_json,start,end,n_obs,sharpe_annual,returns_path
+5384be34-1623-46f0-878c-fcb00155c56d,2026-10-31T12:00:00Z,0123456789abcdef0123456789abcdef01234567,demo,"{""n"":1}",2024-01-02,2024-04-08,70,2.158150022,runs/5384be34-1623-46f0-878c-fcb00155c56d/returns.parquet

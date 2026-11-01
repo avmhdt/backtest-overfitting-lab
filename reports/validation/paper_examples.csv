@@ -1,0 +1,40 @@
+id,source,printed,computed,abs_diff,tolerance,pass,notes
+G-01a,"Bailey and Lopez de Prado (2014), The Deflated Sharpe Ratio, section 'A Numerical Example', working paper pp. 9-10",0.1132,0.113172,2.79981e-05,0.0005,true,"Non-annualised, with 250 observations per year"
+G-01b,"Bailey and Lopez de Prado (2014), The Deflated Sharpe Ratio, section 'A Numerical Example', working paper pp. 9-10",0.9004,0.900397,3.16555e-06,0.0005,true,
+G-01c,"Bailey and Lopez de Prado (2014), The Deflated Sharpe Ratio, section 'A Numerical Example', working paper pp. 9-10",0.9505,0.950502,1.70688e-06,0.0005,true,The paper's 'N=46' case
+G-01d,"Bailey and Lopez de Prado (2014), The Deflated Sharpe Ratio, section 'A Numerical Example', working paper pp. 9-10",0.9505,0.950491,9.18332e-06,0.0005,true,The paper's Normal-returns case at N=88
+G-02,"Bailey, Borwein, Lopez de Prado and Zhu (2014), Pseudo-Mathematics and Financial Charlatanism, section 3 after Theorem 3.1, preprint p. 11",5,4.99809,0.001913,0.5,true,Printed as 'only 5 years'; printed precision
+G-03a,"Bailey and Lopez de Prado (2012), The Sharpe Ratio Efficient Frontier, section 3, working paper p. 10 with Figure 6",0.982,0.981675,0.000325081,0.0005,true,"Monthly over 2 years, Normality assumed"
+G-03b,"Bailey and Lopez de Prado (2012), The Sharpe Ratio Efficient Frontier, section 3, working paper p. 10 with Figure 6",0.913,0.913361,0.000361084,0.0005,true,
+G-03c,"Bailey and Lopez de Prado (2012), The Sharpe Ratio Efficient Frontier, section 3, working paper p. 10 with Figure 6",0.953,0.953505,0.000505219,0.0005,false,"Three years instead of two. Known miss: computed 0.95351, 5e-6 past tolerance, from the input printed to three decimals. See docs/validation.md"
+G-03c-alt,"Bailey and Lopez de Prado (2012), The Sharpe Ratio Efficient Frontier, section 3, working paper p. 10 with Figure 6",0.953,0.953409,0.000408781,0.0005,true,"Alternative rounded input: Figure 6 also prints Ann. SR 1.585. Reported next to G-03c, which is not replaced"
+G-04a,"Bailey and Lopez de Prado (2012), section 5 and Figures 8-11, working paper pp. 11, 37-38",2.73,2.73098,0.000984275,0.005,true,"Daily IID Normal; the paper does not print its day count, 252 used (D-10)"
+G-04b,"Bailey and Lopez de Prado (2012), section 5 and Figures 8-11, working paper pp. 11, 37-38",2.83,2.82883,0.00116641,0.005,true,Weekly IID Normal
+G-04c,"Bailey and Lopez de Prado (2012), section 5 and Figures 8-11, working paper pp. 11, 37-38",3.24,3.2398,0.000199304,0.005,true,Monthly IID Normal
+G-04d,"Bailey and Lopez de Prado (2012), section 5 and Figures 8-11, working paper pp. 11, 37-38",4.99,4.99126,0.00125822,0.005,true,"Monthly IID, moments from Brooks and Kat (2002)"
+G-04e,"Bailey and Lopez de Prado (2012), appendix A.3, working paper p. 20",59.895,59.8951,9.86865e-05,0.0005,true,
+G-05a,"Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23",0.912,0.912245,0.000245461,0.0005,true,A/C corrected annualised Sharpe ratio
+G-05b,"Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23",0.465,0.465123,0.000123,0.0005,true,
+G-05c,"Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23",0.232,0.231731,0.000269114,0.0005,true,
+G-05d,"Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23",74.6,74.5977,0.0022515,0.05,true,
+G-05e,"Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23",0.409,0.404657,0.00434299,0.006,true,"Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+G-05f,"Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23",0.262,0.264464,0.00246428,0.004,true,"Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+G-05g,"Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23",71.3,71.0095,0.290474,0.45,true,"Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+G-05h,"Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23",0.169,0.16277,0.00623017,0.016,true,"Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+G-05i,"Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23",0.438,0.444147,0.00614716,0.016,true,"Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+G-05j,"Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23",52.0,51.3128,0.687242,1.8,true,"Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+G-06a,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",3.46,3.4641,0.00410162,0.005,true,Printed to two decimals
+G-06b,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",2.88,2.87885,0.00115131,0.005,true,Printed to two decimals
+G-06c,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",4.17,4.17085,0.000848014,0.005,true,Printed to two decimals
+G-06d,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",1.15,1.1547,0.00470054,0.005,true,Printed to two decimals
+G-06e,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",1.49,1.49404,0.00403576,0.005,true,Printed to two decimals
+G-06f,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",2.55,2.55117,0.0011707,0.005,true,Printed to two decimals
+G-06g,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",14.31,14.3077,0.0022791,0.005,true,Printed to two decimals
+G-06h,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",15.2,15.1962,0.0037902,0.005,true,Printed to two decimals
+G-06i,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",4.47,4.47214,0.00213595,0.005,true,Printed to two decimals
+G-06j,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",2.89,2.88675,0.00324865,0.005,true,Printed to two decimals
+G-06k,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",1.77,1.77274,0.00274478,0.005,true,Printed to two decimals
+G-06l,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",10.21,10.205,0.00495923,0.005,true,Printed to two decimals
+G-08a,"Harvey, Liu and Zhu (2016), ... and the Cross-Section of Expected Returns, Review of Financial Studies 29(1), p. 20",3.78,3.77779,0.00221258,0.005,true,Bonferroni benchmark over 316 factors by 2012
+G-08b,"Harvey, Liu and Zhu (2016), ... and the Cross-Section of Expected Returns, Review of Financial Studies 29(1), conclusion",0.27,0.26998,2.03937e-05,0.005,true,The 3.0 hurdle corresponds to a p-value of 0.27%
+G-07,"Lopez de Prado (2018), Advances in Financial Machine Learning, chapter 12",,,,0,pending-source,The book is not available to the agent. Added with cv.py in M3.

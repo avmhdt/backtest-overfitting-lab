@@ -1,0 +1,37 @@
+{
+  "contract": "overfitlab trial log",
+  "version": "1.0",
+  "documentation": "https://github.com/avmhdt/backtest-overfitting-lab/blob/main/docs/trial-log.md",
+  "csv": {
+    "encoding": "utf-8",
+    "bom": false,
+    "separator": ",",
+    "header": true,
+    "quoting": "RFC 4180",
+    "line_ending": "LF",
+    "comment_lines": false,
+    "index_column": false
+  },
+  "columns": [
+    {"name": "run_id", "type": "str", "required": true, "regex": "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$", "rule": "UUID v4, lower case canonical form, unique in the file"},
+    {"name": "timestamp", "type": "str", "required": true, "regex": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$", "rule": "ISO 8601 UTC, second precision"},
+    {"name": "git_sha", "type": "str", "required": true, "regex": "^[0-9a-f]{40}(-dirty)?$", "rule": "-dirty if the working tree had uncommitted changes"},
+    {"name": "strategy_family", "type": "str", "required": true, "regex": "^[a-z][a-z0-9_]{0,63}$", "rule": "the unit for N, V and PBO"},
+    {"name": "params_json", "type": "str", "required": true, "rule": "json.dumps(params, sort_keys=True, separators=(\",\", \":\"), ensure_ascii=True, allow_nan=False); a JSON object"},
+    {"name": "start", "type": "str", "required": true, "regex": "^\\d{4}-\\d{2}-\\d{2}$", "rule": "first date in the Parquet; may be empty when n_obs = 0"},
+    {"name": "end", "type": "str", "required": true, "regex": "^\\d{4}-\\d{2}-\\d{2}$", "rule": "last date in the Parquet; start <= end; may be empty when n_obs = 0"},
+    {"name": "n_obs", "type": "int", "required": true, "rule": ">= 0; equals the Parquet row count; 0 for failed and manual trials"},
+    {"name": "sharpe_annual", "type": "float", "required": true, "rule": "at least 6 significant digits; mean(ret)/std(ret, ddof=1)*sqrt(q); empty for failed trials"},
+    {"name": "returns_path", "type": "str", "required": true, "rule": "runs/<run_id>/returns.parquet, relative to the CSV; empty when n_obs = 0"},
+    {"name": "x_periods_per_year", "type": "int", "required": false, "rule": "positive integer, one value per strategy_family; overrides q inferred from dates"}
+  ],
+  "extra_columns": {"prefix": "x_", "position": "after the ten required columns", "readers": "ignore unknown x_ columns"},
+  "known_optional_columns": ["x_periods_per_year", "x_selected", "x_note", "x_dataset", "x_is_holdout", "x_returns_basis", "x_benchmark_run_id"],
+  "parquet": {
+    "path": "results/runs/<run_id>/returns.parquet",
+    "columns": {"date": "date32 (timestamp accepted if every value is midnight)", "ret": "float64"},
+    "rules": ["strictly increasing dates", "no duplicates", "no nulls, NaN or inf", "flat periods are 0.0, not missing", "other columns are ignored"]
+  },
+  "errors": ["E_COLUMNS", "E_RUN_ID", "E_TIMESTAMP", "E_GIT_SHA", "E_FAMILY", "E_PARAMS_JSON", "E_DATES", "E_NOBS", "E_SHARPE", "E_RETURNS_MISSING", "E_RETURNS_SCHEMA", "E_RETURNS_VALUES", "E_RETURNS_ORDER", "E_WINDOW", "E_FREQ_MIX", "E_PERIODS"],
+  "warnings": ["W_SHARPE_MISMATCH", "W_DIRTY", "W_SHORT", "W_FAILED", "W_SUMMARY_ONLY"]
+}

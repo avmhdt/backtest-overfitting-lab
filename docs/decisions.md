@@ -43,3 +43,17 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **M1, line endings:** `.gitattributes` forces LF, because the trial-log dialect and `ruff format` both need LF on Windows too.
 - **M1, `.gitignore`:** besides `results/logs/`, added `results/sims/` and tool caches, plus a negation for `study/src/overfitlab_study/data/`, because the existing `data/` rule also matched that code package. No existing rule was removed.
 - **M1, action pins:** `astral-sh/setup-uv` publishes no moving major tag, so `ci.yml` pins an exact release.
+- **M2, flat series:** `sharpe_ratio` returns 0.0 for a series with zero variance, so a flat factory variant does not abort a matrix evaluation. `return_moments` still raises, because skew and kurtosis are undefined there.
+- **M2, skewness and kurtosis:** moment ratios without a small-sample correction, matching `scipy.stats.skew` and `kurtosis(fisher=False)` defaults, which is what the PSR code in Bailey and López de Prado's appendix expects.
+- **M2, haircut conventions:** follows `Haircut_SR.m`, not the paper's Exhibit 7, where they differ; see [validation](validation.md). `haircut_sharpe` returns the autocorrelation-corrected Sharpe ratio in `sr_annual`, and `haircut_pct` is relative to it, as in Exhibit 5.
+- **M2, simulated golden tolerances:** the spec says Holm and BHY match "within the printed precision because they are simulated". The authors' values come from 2,000 unseeded runs, so half a unit of the third decimal is below their own noise. Tolerances are 3 standard deviations of a 2,000-run median, measured before any comparison with the printed values.
+- **M2, G-03c:** a known miss of 5e-6 past tolerance. The tolerance was left alone; see [validation](validation.md). This needs the owner's ruling for AC-W-03, which asks every sourced case to pass.
+- **M2, contract details settled before the freeze (D-11):**
+  - `E_SHARPE` was added, because the spec's error list had no code for an unreadable `sharpe_annual`.
+  - `W_SUMMARY_ONLY` was added. The Parquet files are git-ignored, so `overfitlab trials validate results/trial_log.csv` in a sibling's CI sees none. Such a log passes on its CSV checks with this warning. If any series exists, a missing one is `E_RETURNS_MISSING`.
+  - `--no-strict` and `strict=False` list errors without failing. `--strict` is the default.
+  - Rows with `n_obs = 0` may leave `start` and `end` empty. An empty `x_periods_per_year` cell means absent.
+  - `E_FREQ_MIX` applies per family in the file validator, and across the whole scope in the evaluator, so families at different frequencies may share a log.
+  - `TrialLogger` writes `x_periods_per_year` and `x_note` in every new log. An existing log keeps its header, since the file is append-only.
+  - The `-dirty` check ignores the log file itself, otherwise every run after the first would be marked dirty.
+- **M2, `evaluate_trial_log`:** ships in M2 with N, V, SR₀, DSR and the haircut. PBO, the snooping tests and the verdict are added in M4, and until then the verdict is `INCONCLUSIVE` with a reason. `trials report` and `trials add-manual` also ship in M2, because the frozen contract refers to them.

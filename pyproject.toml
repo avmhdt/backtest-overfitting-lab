@@ -68,6 +68,7 @@ dev = [
     "pre-commit>=4.0",
     "mkdocs-material>=9.5",
     "mkdocstrings[python]>=0.26",
+    "types-pyyaml>=6.0.12.20261030",
 ]
 
 [tool.ruff]
@@ -79,6 +80,9 @@ src = ["src", "study/src"]
 select = ["E", "F", "W", "I", "B", "UP", "NPY", "PLE", "PLW", "PLC", "D"]
 ignore = ["D105", "D107"]
 
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["overfitlab.verdict.VerdictConfig"]
+
 [tool.ruff.lint.pydocstyle]
 convention = "numpy"
 
@@ -88,6 +92,8 @@ convention = "numpy"
 "scripts/**" = ["D"]
 # Typer needs its option metadata in argument defaults.
 "**/cli.py" = ["B008"]
+# PyArrow is imported on use, so that import overfitlab stays light (NFR-11).
+"src/overfitlab/triallog.py" = ["PLC0415"]
 
 [tool.ruff.format]
 quote-style = "double"
