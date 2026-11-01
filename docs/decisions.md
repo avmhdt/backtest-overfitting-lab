@@ -41,4 +41,5 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **M1, `DATA_ROOT` on Windows:** `.env.example` is fixed by the spec and sets `DATA_ROOT` to a `~` path meant for WSL. On native Windows the settings loader ignores a `DATA_ROOT` that starts with `~`, so a copied `.env` cannot put project data on `C:`.
 - **M1, study in the dev group:** `overfitlab-study` is a dev dependency of the root project, so `uv sync` followed by `uv run olab-study` works from the repo root. The published wheel still contains only `overfitlab`.
 - **M1, line endings:** `.gitattributes` forces LF, because the trial-log dialect and `ruff format` both need LF on Windows too.
-- **M1, `.gitignore`:** besides `results/logs/`, added `results/sims/` and tool caches. No existing rule was removed.
+- **M1, `.gitignore`:** besides `results/logs/`, added `results/sims/` and tool caches, plus a negation for `study/src/overfitlab_study/data/`, because the existing `data/` rule also matched that code package. No existing rule was removed.
+- **M1, action pins:** `astral-sh/setup-uv` publishes no moving major tag, so `ci.yml` pins an exact release.

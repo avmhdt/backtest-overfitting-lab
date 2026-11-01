@@ -50,3 +50,6 @@ results/sims/
 .coverage.*
 coverage.xml
 site/
+
+# The ingest package is code, not data; the data/ rule above would hide it.
+!study/src/overfitlab_study/data/
