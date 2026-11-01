@@ -44,7 +44,11 @@ def config_hash(config: Mapping[str, Any]) -> str:
 
 
 def git_sha(repo_dir: Path = Path(".")) -> str:
-    """Return HEAD, suffixed ``-dirty`` if tracked files have uncommitted changes."""
+    """Return HEAD, suffixed ``-dirty`` if code or config has uncommitted changes.
+
+    results/ and reports/ are this package's own outputs, so a run must not mark the next
+    one dirty by appending to the experiment log.
+    """
     try:
         sha = subprocess.run(
             ["git", "rev-parse", "HEAD"],
@@ -54,7 +58,16 @@ def git_sha(repo_dir: Path = Path(".")) -> str:
             check=True,
         ).stdout.strip()
         status = subprocess.run(
-            ["git", "status", "--porcelain", "--untracked-files=no"],
+            [
+                "git",
+                "status",
+                "--porcelain",
+                "--untracked-files=no",
+                "--",
+                ".",
+                ":(exclude)results",
+                ":(exclude)reports",
+            ],
             cwd=repo_dir,
             capture_output=True,
             text=True,
