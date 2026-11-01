@@ -717,7 +717,7 @@ def _check_family_frequency(
 
 
 def validate_trial_log(path: str | Path) -> list[TrialLogIssue]:
-    """Check a trial log against contract v1.0.
+    r"""Check a trial log against contract v1.0.
 
     A log with no Parquet file at all, such as a fresh clone, is in summary-only mode:
     the CSV is checked and ``W_SUMMARY_ONLY`` says the series were not. If some series
@@ -737,7 +737,7 @@ def validate_trial_log(path: str | Path) -> list[TrialLogIssue]:
     --------
     >>> import tempfile
     >>> log = Path(tempfile.mkdtemp()) / "trial_log.csv"
-    >>> _ = log.write_text("run_id\\n", encoding="utf-8")
+    >>> _ = log.write_text("run_id\n", encoding="utf-8")
     >>> [issue.code for issue in validate_trial_log(log)]
     ['E_COLUMNS']
     """
