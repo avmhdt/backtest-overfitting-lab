@@ -40,3 +40,16 @@ Thumbs.db
 
 # Local build spec (kept out of the public repo)
 SPEC.html
+
+# Run logs and tool output (added in M1)
+results/logs/
+results/sims/
+.hypothesis/
+.benchmarks/
+.coverage
+.coverage.*
+coverage.xml
+site/
+
+# The ingest package is code, not data; the data/ rule above would hide it.
+!study/src/overfitlab_study/data/
