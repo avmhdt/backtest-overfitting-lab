@@ -1,0 +1,8 @@
+site_name: overfitlab
+site_url: https://avmhdt.github.io/backtest-overfitting-lab/
+repo_url: https://github.com/avmhdt/backtest-overfitting-lab
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Decisions: decisions.md
