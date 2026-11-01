@@ -1,0 +1,6 @@
+run_id,timestamp,git_sha,strategy_family,params_json,start,end,n_obs,sharpe_annual,returns_path,x_note
+244f487c-699b-46d6-89fd-539c56dc1cbc,2026-10-31T12:00:00Z,0123456789abcdef0123456789abcdef01234567,ma_demo,"{""fast"":5,""slow"":60}",2024-01-02,2024-01-11,8,12.45612505,runs/244f487c-699b-46d6-89fd-539c56dc1cbc/returns.parquet,
+0e117835-fa1e-47a2-9760-ca1a52f57573,2026-10-31T12:00:00Z,0123456789abcdef0123456789abcdef01234567,ma_demo,"{""fast"":10,""slow"":60}",2024-01-02,2024-01-11,8,2.384652553,runs/0e117835-fa1e-47a2-9760-ca1a52f57573/returns.parquet,
+2777cc0e-e2f9-41d0-a6ac-23f89b5aa22b,2026-10-31T12:00:00Z,0123456789abcdef0123456789abcdef01234567,ma_demo,"{""fast"":20,""slow"":60}",2024-01-02,2024-01-11,8,-7.975339322,runs/2777cc0e-e2f9-41d0-a6ac-23f89b5aa22b/returns.parquet,
+cd22e268-12a2-4495-be01-7cc57b0e0248,2026-10-31T12:00:00Z,0123456789abcdef0123456789abcdef01234567,ma_demo,"{""fast"":30,""slow"":60}",,,0,,,aborted: data gap
+d34a23fc-19c7-4965-95c7-4a39b416a4d4,2026-10-31T12:00:00Z,0123456789abcdef0123456789abcdef01234567,rev_demo,"{""lookback"":20}",2024-01-02,2024-01-11,8,7.271102361,runs/d34a23fc-19c7-4965-95c7-4a39b416a4d4/returns.parquet,

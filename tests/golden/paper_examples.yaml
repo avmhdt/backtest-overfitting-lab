@@ -1,0 +1,390 @@
+# Numbers transcribed from the papers, never from this implementation.
+# Tolerances: 5e-4 for values printed with three or more decimals, otherwise half a unit
+# of the last printed digit. Conventions are passed explicitly per case.
+
+cases:
+  - id: G-01a
+    group: G-01
+    status: sourced
+    source: "Bailey and Lopez de Prado (2014), The Deflated Sharpe Ratio, section 'A Numerical Example', working paper pp. 9-10"
+    fn: dsr
+    inputs: {sr_annual: 2.5, periods_per_year: 250, n_obs: 1250, var_trials_annual: 0.5, skew: -3, kurtosis: 10, n_trials: 100}
+    output: sr0
+    printed: 0.1132
+    tolerance: 0.0005
+    notes: "Non-annualised, with 250 observations per year"
+  - id: G-01b
+    group: G-01
+    status: sourced
+    source: "Bailey and Lopez de Prado (2014), The Deflated Sharpe Ratio, section 'A Numerical Example', working paper pp. 9-10"
+    fn: dsr
+    inputs: {sr_annual: 2.5, periods_per_year: 250, n_obs: 1250, var_trials_annual: 0.5, skew: -3, kurtosis: 10, n_trials: 100}
+    output: dsr
+    printed: 0.9004
+    tolerance: 0.0005
+  - id: G-01c
+    group: G-01
+    status: sourced
+    source: "Bailey and Lopez de Prado (2014), The Deflated Sharpe Ratio, section 'A Numerical Example', working paper pp. 9-10"
+    fn: dsr
+    inputs: {sr_annual: 2.5, periods_per_year: 250, n_obs: 1250, var_trials_annual: 0.5, skew: -3, kurtosis: 10, n_trials: 46}
+    output: dsr
+    printed: 0.9505
+    tolerance: 0.0005
+    notes: "The paper's 'N=46' case"
+  - id: G-01d
+    group: G-01
+    status: sourced
+    source: "Bailey and Lopez de Prado (2014), The Deflated Sharpe Ratio, section 'A Numerical Example', working paper pp. 9-10"
+    fn: dsr
+    inputs: {sr_annual: 2.5, periods_per_year: 250, n_obs: 1250, var_trials_annual: 0.5, skew: 0, kurtosis: 3, n_trials: 88}
+    output: dsr
+    printed: 0.9505
+    tolerance: 0.0005
+    notes: "The paper's Normal-returns case at N=88"
+  - id: G-02
+    group: G-02
+    status: sourced
+    source: "Bailey, Borwein, Lopez de Prado and Zhu (2014), Pseudo-Mathematics and Financial Charlatanism, section 3 after Theorem 3.1, preprint p. 11"
+    fn: minbtl
+    inputs: {n_trials: 45, max_sharpe_annual: 1.0}
+    output: years
+    printed: 5
+    tolerance: 0.5
+    notes: "Printed as 'only 5 years'; printed precision"
+  - id: G-03a
+    group: G-03
+    status: sourced
+    source: "Bailey and Lopez de Prado (2012), The Sharpe Ratio Efficient Frontier, section 3, working paper p. 10 with Figure 6"
+    fn: psr
+    inputs: {sr: 0.458, n_obs: 24, skew: 0, kurtosis: 3}
+    output: psr
+    printed: 0.982
+    tolerance: 0.0005
+    notes: "Monthly over 2 years, Normality assumed"
+  - id: G-03b
+    group: G-03
+    status: sourced
+    source: "Bailey and Lopez de Prado (2012), The Sharpe Ratio Efficient Frontier, section 3, working paper p. 10 with Figure 6"
+    fn: psr
+    inputs: {sr: 0.458, n_obs: 24, skew: -2.448, kurtosis: 10.164}
+    output: psr
+    printed: 0.913
+    tolerance: 0.0005
+  - id: G-03c
+    group: G-03
+    status: sourced
+    source: "Bailey and Lopez de Prado (2012), The Sharpe Ratio Efficient Frontier, section 3, working paper p. 10 with Figure 6"
+    fn: psr
+    inputs: {sr: 0.458, n_obs: 36, skew: -2.448, kurtosis: 10.164}
+    output: psr
+    printed: 0.953
+    tolerance: 0.0005
+    notes: "Three years instead of two. Known miss: computed 0.95351, 5e-6 past tolerance, from the input printed to three decimals. See docs/validation.md"
+    known_discrepancy: true
+  - id: G-03c-alt
+    group: G-03
+    status: sourced
+    source: "Bailey and Lopez de Prado (2012), The Sharpe Ratio Efficient Frontier, section 3, working paper p. 10 with Figure 6"
+    fn: psr_annual
+    inputs: {sr_annual: 1.585, periods_per_year: 12, n_obs: 36, skew: -2.448, kurtosis: 10.164}
+    output: psr
+    printed: 0.953
+    tolerance: 0.0005
+    notes: "Alternative rounded input: Figure 6 also prints Ann. SR 1.585. Reported next to G-03c, which is not replaced"
+  - id: G-04a
+    group: G-04
+    status: sourced
+    source: "Bailey and Lopez de Prado (2012), section 5 and Figures 8-11, working paper pp. 11, 37-38"
+    fn: mintrl_years
+    inputs: {sr_annual: 2, benchmark_annual: 1, periods_per_year: 252}
+    output: years
+    printed: 2.73
+    tolerance: 0.005
+    notes: "Daily IID Normal; the paper does not print its day count, 252 used (D-10)"
+  - id: G-04b
+    group: G-04
+    status: sourced
+    source: "Bailey and Lopez de Prado (2012), section 5 and Figures 8-11, working paper pp. 11, 37-38"
+    fn: mintrl_years
+    inputs: {sr_annual: 2, benchmark_annual: 1, periods_per_year: 52}
+    output: years
+    printed: 2.83
+    tolerance: 0.005
+    notes: "Weekly IID Normal"
+  - id: G-04c
+    group: G-04
+    status: sourced
+    source: "Bailey and Lopez de Prado (2012), section 5 and Figures 8-11, working paper pp. 11, 37-38"
+    fn: mintrl_years
+    inputs: {sr_annual: 2, benchmark_annual: 1, periods_per_year: 12}
+    output: years
+    printed: 3.24
+    tolerance: 0.005
+    notes: "Monthly IID Normal"
+  - id: G-04d
+    group: G-04
+    status: sourced
+    source: "Bailey and Lopez de Prado (2012), section 5 and Figures 8-11, working paper pp. 11, 37-38"
+    fn: mintrl_years
+    inputs: {sr_annual: 2, benchmark_annual: 1, periods_per_year: 12, skew: -0.72, kurtosis: 5.78}
+    output: years
+    printed: 4.99
+    tolerance: 0.005
+    notes: "Monthly IID, moments from Brooks and Kat (2002)"
+  - id: G-04e
+    group: G-04
+    status: sourced
+    source: "Bailey and Lopez de Prado (2012), appendix A.3, working paper p. 20"
+    fn: mintrl_obs
+    inputs: {sr_annual: 2, benchmark_annual: 1, periods_per_year: 12, skew: -0.72, kurtosis: 5.78}
+    output: observations
+    printed: 59.895
+    tolerance: 0.0005
+  - id: G-05a
+    group: G-05
+    status: sourced
+    source: "Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23"
+    fn: haircut
+    inputs: {sr_annual: 1.0, n_obs: 120, periods_per_year: 12, n_tests: 100, autocorr: 0.1, rho_tests: 0.4, method: bonferroni}
+    output: sr_annual
+    printed: 0.912
+    tolerance: 0.0005
+    notes: "A/C corrected annualised Sharpe ratio"
+  - id: G-05b
+    group: G-05
+    status: sourced
+    source: "Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23"
+    fn: haircut
+    inputs: {sr_annual: 1.0, n_obs: 120, periods_per_year: 12, n_tests: 100, autocorr: 0.1, rho_tests: 0.4, method: bonferroni}
+    output: adj_pvalue
+    printed: 0.465
+    tolerance: 0.0005
+  - id: G-05c
+    group: G-05
+    status: sourced
+    source: "Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23"
+    fn: haircut
+    inputs: {sr_annual: 1.0, n_obs: 120, periods_per_year: 12, n_tests: 100, autocorr: 0.1, rho_tests: 0.4, method: bonferroni}
+    output: haircut_sr_annual
+    printed: 0.232
+    tolerance: 0.0005
+  - id: G-05d
+    group: G-05
+    status: sourced
+    source: "Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23"
+    fn: haircut
+    inputs: {sr_annual: 1.0, n_obs: 120, periods_per_year: 12, n_tests: 100, autocorr: 0.1, rho_tests: 0.4, method: bonferroni}
+    output: haircut_pct
+    printed: 74.6
+    tolerance: 0.05
+  - id: G-05e
+    group: G-05
+    status: sourced
+    source: "Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23"
+    fn: haircut
+    inputs: {sr_annual: 1.0, n_obs: 120, periods_per_year: 12, n_tests: 100, autocorr: 0.1, rho_tests: 0.4, method: holm}
+    output: adj_pvalue
+    printed: 0.409
+    tolerance: 0.006
+    notes: "Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+  - id: G-05f
+    group: G-05
+    status: sourced
+    source: "Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23"
+    fn: haircut
+    inputs: {sr_annual: 1.0, n_obs: 120, periods_per_year: 12, n_tests: 100, autocorr: 0.1, rho_tests: 0.4, method: holm}
+    output: haircut_sr_annual
+    printed: 0.262
+    tolerance: 0.004
+    notes: "Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+  - id: G-05g
+    group: G-05
+    status: sourced
+    source: "Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23"
+    fn: haircut
+    inputs: {sr_annual: 1.0, n_obs: 120, periods_per_year: 12, n_tests: 100, autocorr: 0.1, rho_tests: 0.4, method: holm}
+    output: haircut_pct
+    printed: 71.3
+    tolerance: 0.45
+    notes: "Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+  - id: G-05h
+    group: G-05
+    status: sourced
+    source: "Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23"
+    fn: haircut
+    inputs: {sr_annual: 1.0, n_obs: 120, periods_per_year: 12, n_tests: 100, autocorr: 0.1, rho_tests: 0.4, method: bhy}
+    output: adj_pvalue
+    printed: 0.169
+    tolerance: 0.016
+    notes: "Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+  - id: G-05i
+    group: G-05
+    status: sourced
+    source: "Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23"
+    fn: haircut
+    inputs: {sr_annual: 1.0, n_obs: 120, periods_per_year: 12, n_tests: 100, autocorr: 0.1, rho_tests: 0.4, method: bhy}
+    output: haircut_sr_annual
+    printed: 0.438
+    tolerance: 0.016
+    notes: "Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+  - id: G-05j
+    group: G-05
+    status: sourced
+    source: "Harvey and Liu (2015), Backtesting, Journal of Portfolio Management, Exhibit 5, p. 23"
+    fn: haircut
+    inputs: {sr_annual: 1.0, n_obs: 120, periods_per_year: 12, n_tests: 100, autocorr: 0.1, rho_tests: 0.4, method: bhy}
+    output: haircut_pct
+    printed: 52.0
+    tolerance: 1.8
+    notes: "Simulated by the authors with 2,000 unseeded runs. Tolerance is 3 standard deviations of a 2,000-run median, measured before comparing with the printed value"
+  - id: G-06a
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 12, rho: 0.0}
+    output: eta
+    printed: 3.46
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06b
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 12, rho: 0.2}
+    output: eta
+    printed: 2.88
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06c
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 12, rho: -0.2}
+    output: eta
+    printed: 4.17
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06d
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 2, rho: 0.5}
+    output: eta
+    printed: 1.15
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06e
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 4, rho: 0.4}
+    output: eta
+    printed: 1.49
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06f
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 24, rho: 0.6}
+    output: eta
+    printed: 2.55
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06g
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 250, rho: 0.1}
+    output: eta
+    printed: 14.31
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06h
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 125, rho: -0.3}
+    output: eta
+    printed: 15.2
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06i
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 2, rho: -0.9}
+    output: eta
+    printed: 4.47
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06j
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 3, rho: -0.8}
+    output: eta
+    printed: 2.89
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06k
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 48, rho: 0.9}
+    output: eta
+    printed: 1.77
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-06l
+    group: G-06
+    status: sourced
+    source: "Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41"
+    fn: lo_scale
+    inputs: {q: 36, rho: -0.5}
+    output: eta
+    printed: 10.21
+    tolerance: 0.005
+    notes: "Printed to two decimals"
+  - id: G-08a
+    group: G-08
+    status: sourced
+    source: "Harvey, Liu and Zhu (2016), ... and the Cross-Section of Expected Returns, Review of Financial Studies 29(1), p. 20"
+    fn: bonferroni_tstat
+    inputs: {n_tests: 316, alpha: 0.05}
+    output: tstat
+    printed: 3.78
+    tolerance: 0.005
+    notes: "Bonferroni benchmark over 316 factors by 2012"
+  - id: G-08b
+    group: G-08
+    status: sourced
+    source: "Harvey, Liu and Zhu (2016), ... and the Cross-Section of Expected Returns, Review of Financial Studies 29(1), conclusion"
+    fn: tstat_pvalue_pct
+    inputs: {tstat: 3.0}
+    output: pvalue_pct
+    printed: 0.27
+    tolerance: 0.005
+    notes: "The 3.0 hurdle corresponds to a p-value of 0.27%"
+  - id: G-07
+    group: G-07
+    status: pending-source
+    source: "Lopez de Prado (2018), Advances in Financial Machine Learning, chapter 12"
+    fn: cpcv_counts
+    inputs: {n_groups: 6, n_test_groups: 2}
+    output: n_paths
+    printed: null
+    tolerance: 0
+    notes: "The book is not available to the agent. Added with cv.py in M3."

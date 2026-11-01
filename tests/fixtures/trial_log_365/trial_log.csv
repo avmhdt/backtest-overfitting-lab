@@ -1,0 +1,4 @@
+run_id,timestamp,git_sha,strategy_family,params_json,start,end,n_obs,sharpe_annual,returns_path,x_periods_per_year
+eef3ab6a-11e8-489d-b9a5-d181033b116c,2026-10-31T12:00:00Z,0123456789abcdef0123456789abcdef01234567,crypto_daily,"{""n"":1}",2024-01-01,2024-04-29,120,2.832757091,runs/eef3ab6a-11e8-489d-b9a5-d181033b116c/returns.parquet,365
+0ea2748d-bbf1-4732-ae05-0079ba2acaa1,2026-10-31T12:00:00Z,0123456789abcdef0123456789abcdef01234567,crypto_daily,"{""n"":2}",2024-01-01,2024-04-29,120,0.7496338854,runs/0ea2748d-bbf1-4732-ae05-0079ba2acaa1/returns.parquet,365
+5589741e-6a37-4be4-a8cb-8a86b53551ab,2026-10-31T12:00:00Z,0123456789abcdef0123456789abcdef01234567,crypto_daily,"{""n"":3}",2024-01-01,2024-04-29,120,2.810669239,runs/5589741e-6a37-4be4-a8cb-8a86b53551ab/returns.parquet,365
