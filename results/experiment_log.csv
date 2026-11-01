@@ -1,0 +1,2 @@
+run_id,timestamp,git_sha,command,config_hash,params_json,metrics_json,duration_s
+43b39cb7-1ec4-4f08-9049-f61514288423,2026-11-01T21:05:09Z,b004491463394844c8b61dd9c7b4e26ea20da17c,data smoke,44136fa355b3678a,{},"{""french_last_date"":""2026-09-30"",""french_rows"":4812,""n_missing"":4,""status"":""ok""}",0.759
