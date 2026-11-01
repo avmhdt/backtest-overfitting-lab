@@ -57,3 +57,11 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
   - `TrialLogger` writes `x_periods_per_year` and `x_note` in every new log. An existing log keeps its header, since the file is append-only.
   - The `-dirty` check ignores the log file itself, otherwise every run after the first would be marked dirty.
 - **M2, `evaluate_trial_log`:** ships in M2 with N, V, SR₀, DSR and the haircut. PBO, the snooping tests and the verdict are added in M4, and until then the verdict is `INCONCLUSIVE` with a reason. `trials report` and `trials add-manual` also ship in M2, because the frozen contract refers to them.
+- **M3, embargo:** the window of `ceil(embargo_pct * T)` rows starts after the last row purged behind a test fold, not right after the fold. Right after the fold it would sit inside the purge whenever labels span several days and remove nothing. With point labels the two readings coincide.
+- **M3, `t0`:** the default of row positions works only with integer `t1`, so datetime `t1` needs an explicit `t0`.
+- **M3, factory:** breakout and mean-reversion run a long-short state machine and long-only clips it at zero, the same rule as the moving-average family. With `exit_z = 0.0` the spec's rule `|z| < exit_z` never fires, so those variants hold until the opposite entry; this is kept as written. Rolling standard deviations use `ddof=1`. `exit_length` uses Python's `round`.
+- **M3, `run_strategies`:** `T + 1` closes give a `T x N` matrix, because the first close has no return.
+- **M3, `planted_signal_prices`:** the trend oracle is `ma_cross` 10/60 and the mean-reversion oracle is `mean_reversion` 20, 1.0, 0.0, both long-short. The amplitude is calibrated by bisection on one seeded 100,000-bar path, before costs.
+- **M3, `bootstrap.py`:** arrives in M3 instead of M4, because `block_bootstrap_returns` needs it.
+- **M3, generators:** `gaussian_noise` and `student_t_noise` always return `T x N`, including when `N = 1`. `gbm_prices` returns `n_obs` prices, so a run of `T` returns needs `T + 1` prices.
+- **M3, G-07:** stays `pending-source`. The book is not available to the agent, and no primary text was found online. `tests/unit/test_cv.py` asserts 15 splits and 5 paths against the formula in FR-09. The rule against unsourced values keeps it out of AC-W-03 until someone transcribes it from the book.

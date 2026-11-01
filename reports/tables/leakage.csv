@@ -1,0 +1,7 @@
+row,kind,mean,ci_low,ci_high,sd,n_seeds
+kfold_unshuffled,accuracy,0.49609,0.487375,0.504805,0.0306657,50
+kfold_shuffled,accuracy,0.70281,0.697837,0.707783,0.0174989,50
+purged_kfold,accuracy,0.49496,0.486494,0.503426,0.029789,50
+cpcv,accuracy,0.493338,0.48585,0.500826,0.0263486,50
+kfold_shuffled_minus_purged,paired_gap,0.20785,0.199458,0.216242,0.0295295,50
+kfold_unshuffled_minus_purged,paired_gap,0.00113,-0.00137138,0.00363138,0.00880156,50
