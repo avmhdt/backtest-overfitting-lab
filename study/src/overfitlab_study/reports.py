@@ -40,4 +40,5 @@ def write_table(rows: Sequence[Mapping[str, Any]], path: Path) -> None:
         "|" + "---|" * len(columns),
         *("| " + " | ".join(row) + " |" for row in cells),
     ]
-    path.with_suffix(".md").write_text("\n".join(lines) + "\n", encoding="utf-8")
+    with path.with_suffix(".md").open("w", encoding="utf-8", newline="\n") as fh:
+        fh.write("\n".join(lines) + "\n")
