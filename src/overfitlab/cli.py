@@ -12,7 +12,12 @@ import typer
 
 import overfitlab as ol
 from overfitlab.haircut import Method
-from overfitlab.triallog import add_manual_trial, evaluate_trial_log, validate_trial_log
+from overfitlab.triallog import (
+    add_manual_trial,
+    evaluate_trial_log,
+    read_wide_returns,
+    validate_trial_log,
+)
 
 app = typer.Typer(no_args_is_help=True, add_completion=False, help=__doc__)
 trials_app = typer.Typer(no_args_is_help=True, help="Trial-log commands (contract v1.0).")
@@ -216,6 +221,80 @@ def haircut(
             },
             as_json,
         )
+
+    _guarded(action)
+
+
+@app.command()
+def pbo(
+    returns: Annotated[Path, typer.Argument(exists=True, dir_okay=False)],
+    partitions: Annotated[int, typer.Option(help="Number of CSCV blocks S, even.")] = 16,
+    as_json: JsonFlag = False,
+) -> None:
+    """Probability of Backtest Overfitting of a wide return table."""
+
+    def action() -> None:
+        _, matrix = read_wide_returns(returns)
+        result = ol.pbo_cscv(matrix, n_partitions=partitions)
+        _emit(
+            {
+                "pbo": result.pbo,
+                "degradation_slope": result.degradation_slope,
+                "prob_oos_loss": result.prob_oos_loss,
+                "n_combinations": result.n_combinations,
+            },
+            as_json,
+        )
+
+    _guarded(action)
+
+
+@app.command()
+def snoop(
+    returns: Annotated[Path, typer.Argument(exists=True, dir_okay=False)],
+    benchmark_col: Annotated[str | None, typer.Option(help="Column of the benchmark.")] = None,
+    zero_benchmark: Annotated[bool, typer.Option("--zero-benchmark")] = False,
+    test: Annotated[str, typer.Option(help="rc, spa or stepm.")] = "spa",
+    n_boot: Annotated[int, typer.Option(help="Resamples.")] = 1000,
+    block_length: Annotated[str, typer.Option(help="Mean block, or auto.")] = "auto",
+    seed: Annotated[int, typer.Option(help="Bootstrap seed.")] = 0,
+    as_json: JsonFlag = False,
+) -> None:
+    """Data-snooping tests on a wide return table."""
+
+    def action() -> None:
+        if (benchmark_col is None) == (not zero_benchmark):
+            raise ValueError("give exactly one of --benchmark-col and --zero-benchmark")
+        names, matrix = read_wide_returns(returns)
+        if benchmark_col is not None:
+            if benchmark_col not in names:
+                raise ValueError(f"no column {benchmark_col!r}")
+            position = names.index(benchmark_col)
+            kept = [i for i in range(len(names)) if i != position]
+            matrix = matrix[:, kept] - matrix[:, [position]]
+            names = tuple(names[i] for i in kept)
+        block = None if block_length == "auto" else float(block_length)
+        options: dict[str, Any] = {"n_boot": n_boot, "block_length": block, "rng": seed}
+        if test == "rc":
+            reality = ol.reality_check(matrix, **options)
+            _emit({"stat": reality.stat, "pvalue": reality.pvalue}, as_json)
+        elif test == "spa":
+            spa = ol.spa_test(matrix, **options)
+            _emit(
+                {
+                    "stat": spa.stat,
+                    "pvalue_lower": spa.pvalue_lower,
+                    "pvalue_consistent": spa.pvalue_consistent,
+                    "pvalue_upper": spa.pvalue_upper,
+                },
+                as_json,
+            )
+        elif test == "stepm":
+            stepm = ol.romano_wolf_stepdown(matrix, **options)
+            rejected = [name for name, flag in zip(names, stepm.rejected, strict=True) if flag]
+            _emit({"rejected": rejected, "n_steps": stepm.n_steps}, as_json)
+        else:
+            raise ValueError(f"unknown test {test!r}")
 
     _guarded(action)
 

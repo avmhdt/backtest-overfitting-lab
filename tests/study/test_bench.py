@@ -20,6 +20,15 @@ def test_row_flags_a_miss():
 
 def test_run_writes_the_table(tmp_path, monkeypatch):
     monkeypatch.setattr(bench, "jit_compile_seconds", lambda: 1.0)
+    monkeypatch.setattr(bench, "median_time", lambda action: 0.5)
     rows = bench.run(tmp_path)
-    assert [row["requirement"] for row in rows] == ["NFR-03", "NFR-03"]
+    assert [row["requirement"] for row in rows] == [
+        "NFR-01",
+        "NFR-02",
+        "NFR-02",
+        "NFR-02",
+        "NFR-03",
+        "NFR-03",
+    ]
+    assert all(row["met"] for row in rows)
     assert (tmp_path / "tables" / "benchmarks.csv").exists()

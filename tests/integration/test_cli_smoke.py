@@ -33,6 +33,8 @@ def test_version_flag():
         ["mintrl", "--help"],
         ["minbtl", "--help"],
         ["haircut", "--help"],
+        ["pbo", "--help"],
+        ["snoop", "--help"],
         ["trials", "--help"],
         ["trials", "validate", "--help"],
         ["trials", "report", "--help"],
@@ -45,7 +47,16 @@ def test_library_help(args):
 
 @pytest.mark.parametrize(
     "args",
-    [["--help"], ["data", "--help"], ["data", "smoke", "--help"], ["validate", "papers", "--help"]],
+    [
+        ["--help"],
+        ["data", "--help"],
+        ["data", "smoke", "--help"],
+        ["validate", "papers", "--help"],
+        ["validate", "arch", "--help"],
+        ["sim", "leakage", "--help"],
+        ["sim", "noise", "--help"],
+        ["bench", "--help"],
+    ],
 )
 def test_study_help(args):
     assert runner.invoke(study_app, args).exit_code == 0
@@ -133,6 +144,57 @@ def test_table_output_without_json():
 )
 def test_bad_arguments_exit_non_zero(args):
     assert runner.invoke(app, args).exit_code == 1
+
+
+@pytest.fixture
+def wide(tmp_path):
+    rng = np.random.default_rng(0)
+    values = rng.normal(0.0, 0.01, (320, 4))
+    values[:, 1] += 0.01
+    days = np.datetime64("2023-01-02", "D") + np.arange(320)
+    lines = ["date,a,b,c,base"]
+    for day, row in zip(days, values, strict=True):
+        lines.append(",".join([str(day), *(f"{v:.8f}" for v in row)]))
+    path = tmp_path / "wide.csv"
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return str(path)
+
+
+def test_pbo_command(wide):
+    out = invoke_json("pbo", wide, "--partitions=8")
+    assert out["n_combinations"] == 70
+    assert 0.0 <= out["pbo"] <= 1.0
+
+
+@pytest.mark.parametrize("test", ["rc", "spa", "stepm"])
+def test_snoop_command_with_a_zero_benchmark(wide, test):
+    out = invoke_json("snoop", wide, "--zero-benchmark", f"--test={test}", "--n-boot=100")
+    assert out
+
+
+def test_snoop_with_a_benchmark_column_drops_that_column(wide):
+    out = invoke_json(
+        "snoop", wide, "--benchmark-col=base", "--test=stepm", "--n-boot=200", "--block-length=2"
+    )
+    assert "base" not in out["rejected"]
+    assert "b" in out["rejected"]
+
+
+@pytest.mark.parametrize(
+    "args",
+    [
+        ["--zero-benchmark", "--benchmark-col=a"],
+        [],
+        ["--benchmark-col=nope"],
+        ["--zero-benchmark", "--test=other"],
+    ],
+)
+def test_snoop_rejects_bad_arguments(wide, args):
+    assert runner.invoke(app, ["snoop", wide, *args]).exit_code == 1
+
+
+def test_pbo_rejects_bad_partitions(wide):
+    assert runner.invoke(app, ["pbo", wide, "--partitions=3"]).exit_code == 1
 
 
 def test_trials_validate_clean(materialise):

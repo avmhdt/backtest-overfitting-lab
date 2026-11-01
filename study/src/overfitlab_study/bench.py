@@ -16,10 +16,14 @@ from typing import Any
 import numba
 import numpy as np
 
+import overfitlab as ol
 from overfitlab.factory import run_strategies, strategy_grid
 from overfitlab.synth import gbm_prices
 from overfitlab_study.reports import write_table
 
+NFR_01_TARGET_S = 10.0
+NFR_02_TARGET_S = 60.0
+NFR_02_STEPM_TARGET_S = 120.0
 NFR_03_TARGET_S = 5.0
 NFR_03_JIT_TARGET_S = 30.0
 JIT_PROBE = (
@@ -98,7 +102,39 @@ def factory_rows() -> list[dict[str, Any]]:
     ]
 
 
+def inference_rows() -> list[dict[str, Any]]:
+    returns = ol.gaussian_noise(1260, 1000, rng=0)
+    size = "T = 1,260, N = 1,000"
+    boot: dict[str, Any] = {"n_boot": 1000, "block_length": 3.0, "rng": 0}
+    return [
+        row(
+            "NFR-01",
+            f"pbo_cscv, {size}, S = 16",
+            median_time(lambda: ol.pbo_cscv(returns)),
+            NFR_01_TARGET_S,
+        ),
+        row(
+            "NFR-02",
+            f"reality_check, {size}, B = 1,000",
+            median_time(lambda: ol.reality_check(returns, **boot)),
+            NFR_02_TARGET_S,
+        ),
+        row(
+            "NFR-02",
+            f"spa_test, {size}, B = 1,000",
+            median_time(lambda: ol.spa_test(returns, **boot)),
+            NFR_02_TARGET_S,
+        ),
+        row(
+            "NFR-02",
+            f"romano_wolf_stepdown, {size}, B = 1,000",
+            median_time(lambda: ol.romano_wolf_stepdown(returns, **boot)),
+            NFR_02_STEPM_TARGET_S,
+        ),
+    ]
+
+
 def run(reports_dir: Path) -> list[dict[str, Any]]:
-    rows = factory_rows()
+    rows = [*inference_rows(), *factory_rows()]
     write_table(rows, reports_dir / "tables" / "benchmarks.csv")
     return rows

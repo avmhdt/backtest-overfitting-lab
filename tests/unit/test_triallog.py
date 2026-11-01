@@ -241,6 +241,7 @@ def test_fresh_clone_is_summary_only(materialise):
     assert report.moments_assumed
     assert (report.skew, report.kurtosis) == (0.0, 3.0)
     assert report.periods_per_year == 365
+    assert report.spa_pvalue is None
 
 
 def test_summary_mode_infers_frequency_without_declared_periods(materialise):

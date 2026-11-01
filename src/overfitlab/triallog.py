@@ -14,7 +14,7 @@ import re
 import subprocess
 import uuid
 from collections.abc import Mapping, Sequence
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Literal, cast
@@ -25,8 +25,10 @@ from numpy.typing import ArrayLike, NDArray
 from overfitlab._arrays import as_vector
 from overfitlab.deflated import deflated_sharpe_ratio
 from overfitlab.haircut import haircut_sharpe
+from overfitlab.pbo import PBOResult, pbo_cscv
 from overfitlab.sharpe import annualize_sharpe, return_moments, sharpe_ratio
-from overfitlab.verdict import VerdictConfig
+from overfitlab.snooping import SPAResult, StepMResult
+from overfitlab.verdict import MIN_OBS_PER_BLOCK, VerdictConfig, decide, judge, run_snooping
 
 if TYPE_CHECKING:
     import pyarrow as pa
@@ -58,6 +60,8 @@ _DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 _NO_GIT_SHA = "0" * 40 + "-dirty"
 _SHARPE_TOLERANCE = 0.01
 _SHORT_OBS = 60
+_MIN_CLUSTER_OBS = 252
+_MIN_SILHOUETTE = 0.05
 
 
 class TrialLogError(ValueError):
@@ -781,6 +785,52 @@ def validate_trial_log(path: str | Path) -> list[TrialLogIssue]:
     return issues
 
 
+def _mean_silhouette(distances: F64, labels: NDArray[np.int64]) -> float:
+    """Mean silhouette for a precomputed distance matrix; singletons score zero."""
+    n_clusters = int(labels.max())
+    members = np.zeros((labels.size, n_clusters))
+    members[np.arange(labels.size), labels - 1] = 1.0
+    sizes = members.sum(axis=0)
+    totals = distances @ members
+    rows = np.arange(labels.size)
+    own = labels - 1
+    within = totals[rows, own] / np.maximum(sizes[own] - 1.0, 1.0)
+    between = totals / np.where(sizes > 0, sizes, np.inf)
+    between[rows, own] = np.inf
+    nearest = between.min(axis=1)
+    scores = (nearest - within) / np.maximum(np.maximum(nearest, within), 1e-12)
+    scores[sizes[own] == 1.0] = 0.0
+    return float(scores.mean())
+
+
+def _effective_trials(returns: F64) -> int:
+    """Estimate independent trials by clustering return correlations.
+
+    Follows the idea of Lopez de Prado and Lewis (2019): hierarchical clustering on the
+    distance ``sqrt((1 - rho) / 2)``, with the number of clusters chosen by the largest mean
+    silhouette. With no structure to find, every trial counts as independent.
+    """
+    from scipy.cluster.hierarchy import fcluster, linkage
+    from scipy.spatial.distance import squareform
+
+    n_trials = returns.shape[1]
+    if n_trials < 3:
+        return int(n_trials)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        correlation = np.nan_to_num(np.corrcoef(returns, rowvar=False))
+    distances = np.sqrt(np.clip(0.5 * (1.0 - correlation), 0.0, None))
+    np.fill_diagonal(distances, 0.0)
+    tree = linkage(squareform(distances, checks=False), method="average")
+    candidates = np.unique(np.geomspace(2, n_trials - 1, num=min(n_trials - 2, 40)).astype(int))
+    best_count, best_score = int(n_trials), _MIN_SILHOUETTE
+    for count in candidates:
+        labels = fcluster(tree, int(count), criterion="maxclust").astype(np.int64)
+        score = _mean_silhouette(distances, labels)
+        if score > best_score:
+            best_count, best_score = int(labels.max()), score
+    return best_count
+
+
 class TrialLog:
     """A loaded trial log, or a filtered part of one.
 
@@ -950,6 +1000,12 @@ class TrialLog:
                 for row in self.rows
             }
             return float(len(keys))
+        if mode == "clustered":
+            _, matrix, _ = self.returns_matrix()
+            if matrix.shape[0] < _MIN_CLUSTER_OBS:
+                raise ValueError(f"clustered needs {_MIN_CLUSTER_OBS} common observations")
+            without_series = len(self.rows) - matrix.shape[1]
+            return float(_effective_trials(matrix) + without_series)
         raise ValueError(f"unknown mode {mode!r}")
 
     def variance_of_sharpes(
@@ -1134,6 +1190,10 @@ class TrialLogReport:
         Haircut in percent.
     pbo : float or None
         Probability of Backtest Overfitting, if computed.
+    spa_pvalue : float or None
+        Consistent SPA p-value, if computed.
+    stepm_rejects_selected : bool or None
+        Whether the stepdown rejects the selected trial, if computed.
     verdict : str
         ``PASS``, ``FAIL`` or ``INCONCLUSIVE``.
     reasons : mapping
@@ -1163,6 +1223,8 @@ class TrialLogReport:
     haircut_sr_annual: float | None
     haircut_pct: float | None
     pbo: float | None
+    spa_pvalue: float | None
+    stepm_rejects_selected: bool | None
     verdict: str
     reasons: Mapping[str, str] = field(default_factory=dict)
 
@@ -1175,6 +1237,88 @@ class TrialLogReport:
         return json.dumps(self.to_dict(), sort_keys=True)
 
 
+def read_wide_returns(path: str | Path) -> tuple[tuple[str, ...], F64]:
+    r"""Read a wide table of returns: a ``date`` column and one column per trial.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+        Parquet or CSV file.
+
+    Returns
+    -------
+    names : tuple of str
+        Trial columns.
+    matrix : numpy.ndarray
+        ``T x N`` returns.
+
+    Raises
+    ------
+    ValueError
+        If there is no trial column or a value is not a number.
+
+    Examples
+    --------
+    >>> import tempfile
+    >>> file = Path(tempfile.mkdtemp()) / "wide.csv"
+    >>> _ = file.write_text("date,a,b\n2024-01-02,0.1,0.2\n", encoding="utf-8")
+    >>> read_wide_returns(file)[0]
+    ('a', 'b')
+    """
+    source = Path(path)
+    if source.suffix.lower() == ".parquet":
+        table = _read_table(source)
+        names = tuple(name for name in table.column_names if name != "date")
+        columns = [table[name].to_numpy() for name in names]
+    else:
+        with source.open(encoding="utf-8", newline="") as fh:
+            reader = csv.reader(fh)
+            header = next(reader)
+            body = list(reader)
+        keep = [i for i, name in enumerate(header) if name != "date"]
+        names = tuple(header[i] for i in keep)
+        columns = [np.array([float(row[i]) for row in body]) for i in keep]
+    if not names:
+        raise ValueError(f"{source} has no trial columns")
+    return names, np.column_stack(columns).astype(np.float64)
+
+
+def _benchmark_series(log: TrialLog, dates: NDArray[np.datetime64]) -> F64 | None:
+    """Return the series named by ``x_benchmark_run_id`` on ``dates``, if a row names one."""
+    named = {str(row.get("x_benchmark_run_id", "")) for row in log.rows} - {""}
+    if not named:
+        return None
+    if len(named) > 1:
+        raise ValueError(f"more than one x_benchmark_run_id in scope: {sorted(named)}")
+    run_id = named.pop()
+    path = log.base_dir / "runs" / run_id / "returns.parquet"
+    if not path.exists():
+        raise ValueError(f"benchmark series {run_id} is missing")
+    series, problem = _load_series(path)
+    if series is None:
+        raise ValueError(f"benchmark series {run_id}: {problem}")
+    if not np.isin(dates, series.dates).all():
+        raise ValueError(f"benchmark series {run_id} does not cover the trials' dates")
+    return series.ret[np.searchsorted(series.dates, dates)]
+
+
+def _matrix_evidence(
+    log: TrialLog, run_id: str, config: VerdictConfig
+) -> tuple[PBOResult | None, SPAResult | None, StepMResult | None, int]:
+    """Run the tests that need the aligned return matrix, where the log allows them."""
+    dates, matrix, run_ids = log.returns_matrix()
+    if run_id not in run_ids or matrix.shape[0] < 9:
+        return None, None, None, 0
+    column = run_ids.index(run_id)
+    pbo = None
+    if matrix.shape[1] >= 2 and matrix.shape[0] >= config.pbo_partitions * MIN_OBS_PER_BLOCK:
+        pbo = pbo_cscv(matrix, n_partitions=config.pbo_partitions)
+    benchmark = _benchmark_series(log, dates)
+    rel_perf = matrix if benchmark is None else matrix - benchmark[:, np.newaxis]
+    spa, stepm = run_snooping(rel_perf, config, 0)
+    return pbo, spa, stepm, column
+
+
 def evaluate_trial_log(
     path: str | Path,
     *,
@@ -1184,7 +1328,7 @@ def evaluate_trial_log(
     exclude_failed: bool = False,
     config: VerdictConfig = VerdictConfig(),
 ) -> TrialLogReport:
-    """Compute N, V, SR0, DSR and the haircut of a trial log.
+    """Evaluate a trial log: N, V, SR0, DSR, PBO, snooping tests, haircut and verdict.
 
     Parameters
     ----------
@@ -1252,7 +1396,6 @@ def evaluate_trial_log(
         sr, n_obs, n_trials=n_trials, var_trials=variance, skew=skew, kurtosis=kurtosis
     )
     sr_annual = annualize_sharpe(sr, q)
-    reasons = {"pbo": "not computed: the verdict gate arrives in M4"}
     haircut_sr: float | None = None
     haircut_pct: float | None = None
     try:
@@ -1264,8 +1407,19 @@ def evaluate_trial_log(
             method=config.haircut_method,
         )
         haircut_sr, haircut_pct = haircut.haircut_sr_annual, haircut.haircut_pct
-    except ValueError as error:
-        reasons["haircut"] = f"not computed: {error}"
+    except ValueError:
+        pass
+
+    pbo, spa, stepm, column = _matrix_evidence(log, run_id, replace(config, periods_per_year=q))
+    reasons = judge(
+        config,
+        dsr=deflated,
+        pbo=pbo,
+        spa=spa,
+        stepm=stepm,
+        haircut_sr_annual=haircut_sr,
+        selected=column,
+    )
     return TrialLogReport(
         families=tuple(sorted({str(item["strategy_family"]) for item in log.rows})),
         n_trials=n_trials,
@@ -1289,7 +1443,9 @@ def evaluate_trial_log(
         moments_assumed=assumed,
         haircut_sr_annual=haircut_sr,
         haircut_pct=haircut_pct,
-        pbo=None,
-        verdict="INCONCLUSIVE",
+        pbo=None if pbo is None else pbo.pbo,
+        spa_pvalue=None if spa is None else spa.pvalue_consistent,
+        stepm_rejects_selected=None if stepm is None else bool(stepm.rejected[column]),
+        verdict=decide(reasons),
         reasons=reasons,
     )

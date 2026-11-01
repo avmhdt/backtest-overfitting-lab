@@ -11,6 +11,7 @@ from overfitlab.deflated import (
 )
 from overfitlab.factory import StrategySpec, run_strategies, strategy_grid
 from overfitlab.haircut import haircut_sharpe, sharpe_to_tstat
+from overfitlab.pbo import PBOResult, pbo_cscv
 from overfitlab.results import DSRResult, HaircutResult, ReturnMoments
 from overfitlab.sharpe import (
     annualize_sharpe,
@@ -20,6 +21,14 @@ from overfitlab.sharpe import (
     return_moments,
     sharpe_ratio,
     sharpe_std,
+)
+from overfitlab.snooping import (
+    SnoopResult,
+    SPAResult,
+    StepMResult,
+    reality_check,
+    romano_wolf_stepdown,
+    spa_test,
 )
 from overfitlab.synth import (
     SynthResult,
@@ -45,7 +54,7 @@ from overfitlab.triallog import (
     read_trial_log,
     validate_trial_log,
 )
-from overfitlab.verdict import VerdictConfig
+from overfitlab.verdict import VerdictConfig, VerdictReport, evaluate
 
 __version__ = "0.1.0"
 
@@ -54,8 +63,12 @@ __all__ = [
     "CombinatorialPurgedCV",
     "DSRResult",
     "HaircutResult",
+    "PBOResult",
     "PurgedKFold",
     "ReturnMoments",
+    "SPAResult",
+    "SnoopResult",
+    "StepMResult",
     "StrategySpec",
     "SynthResult",
     "TRIAL_LOG_COLUMNS",
@@ -67,6 +80,7 @@ __all__ = [
     "TrialLogger",
     "TrialSharpes",
     "VerdictConfig",
+    "VerdictReport",
     "__version__",
     "add_manual_trial",
     "annualize_sharpe",
@@ -75,6 +89,7 @@ __all__ = [
     "canonical_params_json",
     "deflated_sharpe_ratio",
     "dsr_from_returns",
+    "evaluate",
     "evaluate_trial_log",
     "expected_max_sharpe",
     "gaussian_noise",
@@ -83,16 +98,20 @@ __all__ = [
     "min_backtest_length",
     "min_track_record_length",
     "optimal_block_length",
+    "pbo_cscv",
     "planted_signal_matrix",
     "planted_signal_prices",
     "probabilistic_sharpe_ratio",
     "psr_from_returns",
     "read_trial_log",
+    "reality_check",
     "return_moments",
+    "romano_wolf_stepdown",
     "run_strategies",
     "sharpe_ratio",
     "sharpe_std",
     "sharpe_to_tstat",
+    "spa_test",
     "stationary_bootstrap_indices",
     "strategy_grid",
     "student_t_noise",
