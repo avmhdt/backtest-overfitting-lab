@@ -1,3 +1,4 @@
 run_id,timestamp,git_sha,command,config_hash,params_json,metrics_json,duration_s
 43b39cb7-1ec4-4f08-9049-f61514288423,2026-11-01T21:05:09Z,b004491463394844c8b61dd9c7b4e26ea20da17c,data smoke,44136fa355b3678a,{},"{""french_last_date"":""2026-09-30"",""french_rows"":4812,""n_missing"":4,""status"":""ok""}",0.759
 2652619c-e171-4cdf-92c6-a9008a652011,2026-11-01T21:27:50Z,2cc3206fd1b47a58087a77b4c797f3008c785c34-dirty,validate papers,44136fa355b3678a,{},"{""passed"":37,""pending"":1,""sourced"":38,""status"":""ok""}",0.127
+ce4c3bb2-dd42-4137-8c6d-06d2539cfeec,2026-11-01T21:29:20Z,88ba42196d98976ac72ed213057f0fbcbed07d97,validate papers,44136fa355b3678a,{},"{""passed"":37,""pending"":1,""sourced"":38,""status"":""ok""}",0.123
