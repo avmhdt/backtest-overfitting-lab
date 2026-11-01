@@ -12,7 +12,7 @@ Every value below is transcribed from the paper itself, with its page, table or 
 | G-04 | Bailey and López de Prado (2012), MinTRL | Passes |
 | G-05 | Harvey and Liu (2015), Exhibit 5 | Passes |
 | G-06 | Lo (2002), Table 2 | Passes on twelve selected entries |
-| G-07 | López de Prado (2018), CPCV counts | Pending source: the book is not available to the build agent |
+| G-07 | López de Prado (2018), CPCV counts | Pending source: the book is not available to the build agent. The counts are asserted against the formula in FR-09 in `tests/unit/test_cv.py` |
 | G-08 | Harvey, Liu and Zhu (2016) | Passes on the Bonferroni benchmark and on the p-value of the 3.0 hurdle |
 
 ## Known discrepancies

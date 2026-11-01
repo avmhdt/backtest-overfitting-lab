@@ -14,13 +14,13 @@
 
 ## Requirements
 
-- [ ] Purged k-fold with embargo and combinatorial purged CV (CPCV), handling overlapping multi-day labels.
-- [ ] Probabilistic and Deflated Sharpe Ratio (Bailey and López de Prado), adjusting for skew, kurtosis and the number and variance of trials.
+- [x] Purged k-fold with embargo and combinatorial purged CV (CPCV), handling overlapping multi-day labels. (FR-08, FR-09)
+- [x] Probabilistic and Deflated Sharpe Ratio (Bailey and López de Prado), adjusting for skew, kurtosis and the number and variance of trials. (FR-03, FR-05)
 - [ ] Probability of Backtest Overfitting via CSCV (Bailey, Borwein, López de Prado and Zhu).
 - [ ] Data-snooping tests: White’s Reality Check, Hansen’s SPA, and the Romano–Wolf stepdown.
-- [ ] Minimum backtest length and a Sharpe ratio haircut calculator (Harvey and Liu).
-- [ ] A strategy factory that generates thousands of parameter variants (crossovers, breakouts, mean reversion) to test against.
-- [ ] A synthetic data generator with known ground truth: pure noise, and noise with a planted signal of chosen strength.
+- [x] Minimum backtest length and a Sharpe ratio haircut calculator (Harvey and Liu). (FR-06, FR-07)
+- [x] A strategy factory that generates thousands of parameter variants (crossovers, breakouts, mean reversion) to test against. (FR-15)
+- [x] A synthetic data generator with known ground truth: pure noise, and noise with a planted signal of chosen strength. (FR-16)
 
 ## Data
 
@@ -40,7 +40,7 @@ Raw and licensed data live in `data/`, which is git-ignored. Only download scrip
 - [ ] On pure noise, the best of 1,000 strategies shows a high naive Sharpe while the DSR is not significant and PBO is near or above 0.5.
 - [ ] On planted-signal data, each test detects the signal at roughly its theoretical power.
 - [ ] Implementations reproduce the numerical examples in the original papers to three decimals.
-- [ ] A simulation shows the accuracy gap between standard k-fold and purged k-fold on overlapping labels.
+- [x] A simulation shows the accuracy gap between standard k-fold and purged k-fold on overlapping labels. (AC-W-04)
 
 ### Impresses hirers
 
