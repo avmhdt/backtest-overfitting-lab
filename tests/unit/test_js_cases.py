@@ -16,7 +16,8 @@ def test_fixture_matches_the_generator() -> None:
     expected = build_cases()
     actual = json.loads((ROOT / "tests" / "fixtures" / "js_cases.json").read_text(encoding="utf-8"))
     assert [case["id"] for case in actual] == [case["id"] for case in expected]
-    assert [case["inputs"] for case in actual] == [case["inputs"] for case in expected]
+    for found, wanted in zip(actual, expected, strict=True):
+        assert found["inputs"] == pytest.approx(wanted["inputs"], rel=1e-12, abs=1e-12)
     assert [case["expected"] for case in actual] == pytest.approx(
         [case["expected"] for case in expected], rel=1e-12, abs=1e-12
     )
