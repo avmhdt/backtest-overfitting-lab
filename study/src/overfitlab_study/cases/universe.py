@@ -45,6 +45,15 @@ def resolve(universe: Mapping[str, Any], processed_dir: Path) -> list[Series]:
     return items
 
 
+def real_data_ready(universe: Mapping[str, Any], processed_dir: Path) -> bool:
+    """True when every table the case studies read is in place."""
+    if not tables.factor_path(processed_dir, "french", RF_DATASET).exists():
+        return False
+    if not all(item.path.exists() for item in resolve(universe, processed_dir)):
+        return False
+    return (processed_dir / "signal_returns").exists()
+
+
 def risk_free(processed_dir: Path) -> pl.DataFrame:
     """Daily decimal risk-free rate from the Ken French library (DQ-07)."""
     path = tables.factor_path(processed_dir, "french", RF_DATASET)

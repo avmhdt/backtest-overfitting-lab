@@ -10,11 +10,12 @@ import httpx
 import typer
 
 from overfitlab_study import bench as bench_module
+from overfitlab_study import figures as figures_module
 from overfitlab_study.cases import factors as case_factors_module
 from overfitlab_study.cases import osap as case_osap_module
 from overfitlab_study.cases import projects as projects_module
 from overfitlab_study.cases import stooq_factory
-from overfitlab_study.cases.universe import load_universe
+from overfitlab_study.cases.universe import load_universe, real_data_ready
 from overfitlab_study.config import load_study_config
 from overfitlab_study.data import aqr as aqr_module
 from overfitlab_study.data import french as french_module
@@ -39,6 +40,8 @@ case_app = typer.Typer(no_args_is_help=True, help="Real-data case studies.")
 app.add_typer(case_app, name="case")
 
 GOLDEN_CASES = Path("tests/golden/paper_examples.yaml")
+QUICK_LEAKAGE_SEEDS = 4
+QUICK_FIGURE_SEEDS = 2
 
 
 @app.callback()
@@ -392,11 +395,61 @@ def validate_arch(
 
 
 @app.command()
+def figures(
+    docs: Annotated[bool, typer.Option("--docs", help="Also copy to the docs site.")] = False,
+    seeds: Annotated[int | None, typer.Option(help="Replications per PBO scenario.")] = None,
+) -> None:
+    """Draw the theory figures."""
+    settings = Settings()
+    count = figures_module.PBO_SEEDS if seeds is None else seeds
+    with study_run("figures", settings, params={"seeds": count}) as run:
+        paths = figures_module.run(
+            settings.olab_reports_dir, master_seed=settings.olab_seed, seeds=count
+        )
+        run.metrics.update(figures=len(paths))
+        if docs:
+            run.metrics.update(
+                copied=figures_module.copy_to_docs(settings.olab_reports_dir, Path("docs"))
+            )
+    typer.echo(f"figures: {len(paths)}")
+
+
+@app.command("all")
+def run_everything(
+    quick: Annotated[bool, typer.Option("--quick", help="Reduced sizes.")] = False,
+) -> None:
+    """Regenerate every table and figure from data and seeds."""
+    validate_papers()
+    if quick:
+        typer.echo("skipped: validate arch (runs in CI at full size)")
+    else:
+        validate_arch()
+    sim_noise(quick=quick)
+    sim_power(check=True, quick=quick)
+    if not quick:
+        sim_power()
+    sim_leakage(seeds=QUICK_LEAKAGE_SEEDS if quick else None)
+    settings = Settings()
+    if real_data_ready(load_universe(), settings.processed_dir):
+        case_stooq()
+        case_factors()
+        case_osap()
+    else:
+        typer.echo("skipped: case studies (run the data commands first)")
+    projects()
+    figures(docs=not quick, seeds=QUICK_FIGURE_SEEDS if quick else None)
+    if quick:
+        typer.echo("skipped: bench (timings differ on every run)")
+    else:
+        bench()
+
+
+@app.command()
 def bench() -> None:
     """Measure the performance requirements on this machine."""
     settings = Settings()
     with study_run("bench", settings) as run:
-        rows = bench_module.run(settings.olab_reports_dir)
+        rows = bench_module.run(settings.olab_reports_dir, docs_dir=Path("docs"))
         run.metrics.update({row["case"]: row["seconds"] for row in rows})
     for row in rows:
         typer.echo(f"{row['requirement']} {row['case']}: {row['seconds']:.3f} s, met={row['met']}")
