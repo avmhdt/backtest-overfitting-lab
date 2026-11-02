@@ -224,7 +224,7 @@ def haircut_sharpe(
         adjusted = min(n_tests * pvalue, 1.0)
     else:
         adjusted = _simulated_adjusted_pvalue(pvalue, n_tests, method, rho_tests, n_sims, rng)
-    tail = float(stdtrit(dof, 1.0 - adjusted / 2.0))
+    tail = min(tstat, abs(float(stdtrit(dof, adjusted / 2.0))))
     haircut_sr = tail / math.sqrt(months) * math.sqrt(12.0)
     haircut_pct = 100.0 * (corrected - haircut_sr) / corrected
     return HaircutResult(method, corrected, haircut_sr, haircut_pct, tstat, pvalue, adjusted)
