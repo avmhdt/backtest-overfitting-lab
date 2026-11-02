@@ -6,9 +6,9 @@ Intel64 Family 6 Model 183 Stepping 1, GenuineIntel, 32 logical cores, 127.7 GB 
 
 | Requirement | Case | Seconds | Target (s) | Met |
 |---|---|---:|---:|---|
-| NFR-01 | pbo_cscv, T = 1,260, N = 1,000, S = 16 | 0.908 | 10 | yes |
-| NFR-02 | reality_check, T = 1,260, N = 1,000, B = 1,000 | 0.316 | 60 | yes |
-| NFR-02 | spa_test, T = 1,260, N = 1,000, B = 1,000 | 0.456 | 60 | yes |
-| NFR-02 | romano_wolf_stepdown, T = 1,260, N = 1,000, B = 1,000 | 0.446 | 120 | yes |
-| NFR-03 | run_strategies, 1,034 variants, 5,000 bars | 0.240 | 5 | yes |
-| NFR-03 | first-call JIT compile | 3.411 | 30 | yes |
+| NFR-01 | pbo_cscv, T = 1,260, N = 1,000, S = 16 | 0.391 | 10 | yes |
+| NFR-02 | reality_check, T = 1,260, N = 1,000, B = 1,000 | 0.154 | 60 | yes |
+| NFR-02 | spa_test, T = 1,260, N = 1,000, B = 1,000 | 0.232 | 60 | yes |
+| NFR-02 | romano_wolf_stepdown, T = 1,260, N = 1,000, B = 1,000 | 0.228 | 120 | yes |
+| NFR-03 | run_strategies, 1,034 variants, 5,000 bars | 0.096 | 5 | yes |
+| NFR-03 | first-call JIT compile | 2.340 | 30 | yes |

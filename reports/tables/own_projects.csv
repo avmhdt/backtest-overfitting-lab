@@ -1,5 +1,12 @@
 project,status,family,naive_sr_annual,n_raw,n_clustered,var_trials_annual,sr0_annual,dsr,pbo,pbo_note,bhy_haircut_sr_annual,verdict
-equity-factor-pipeline,valid,replication,0.719241,20,7,0.0817486,0.543445,0.814194,,not computed: no aligned matrix with enough observations,0.548847,FAIL
+equity-factor-pipeline,valid,composite,1.24646,209,,0.677933,2.28886,1.43465e-05,,not computed: no aligned matrix with enough observations,0.99003,FAIL
+equity-factor-pipeline,valid,investment,1.00096,32,17,0.110255,0.697254,0.951538,0.0500389,,0.824774,PASS
+equity-factor-pipeline,valid,low_risk,0.797911,32,2,0.0467108,0.453838,0.957004,0.140093,,0.605009,PASS
+equity-factor-pipeline,valid,momentum,0.602564,66,4,0.093013,0.726093,0.260668,,not computed: no aligned matrix with enough observations,0.355262,FAIL
+equity-factor-pipeline,valid,quality,0.980592,44,22,0.0803776,0.631345,0.9506,0.0560995,,0.803715,PASS
+equity-factor-pipeline,valid,replication,0.80806,86,,0.0593775,0.603601,0.840305,,not computed: no aligned matrix with enough observations,0.60076,FAIL
+equity-factor-pipeline,valid,size,0.0922224,8,3,0.00117568,0.0500269,0.588361,0.960062,,0.0281863,FAIL
+equity-factor-pipeline,valid,value,0.682654,40,5,0.0546045,0.511629,0.802412,0.240715,,0.466338,FAIL
 llm-text-alpha,no trial log,,,,,,,,,,,
 stat-arb-pairs,no trial log,,,,,,,,,,,
 regime-portfolio-construction,no trial log,,,,,,,,,,,
