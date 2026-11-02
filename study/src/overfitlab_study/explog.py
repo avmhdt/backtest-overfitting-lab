@@ -132,6 +132,7 @@ def study_run(
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
 
+    sha = git_sha()
     started = time.perf_counter()
     logger.info("run started")
     status = "ok"
@@ -151,7 +152,7 @@ def study_run(
             {
                 "run_id": run.run_id,
                 "timestamp": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                "git_sha": git_sha(),
+                "git_sha": sha,
                 "command": command,
                 "config_hash": config_hash(config if config is not None else params),
                 "params_json": canonical_json(params),

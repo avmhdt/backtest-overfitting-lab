@@ -1,0 +1,3 @@
+| family | n_trials | n_obs | start | end | selected_params | naive_sr_annual | var_trials_annual | sr0_annual | dsr | pbo | spa_pvalue | stepm_rejects_selected | haircut_sr_annual | verdict | holdout_start | holdout_end | holdout_n_obs | holdout_sr_annual |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| stooq_factory | 1034 | 4255 | 2007-02-06 | 2023-12-29 | {"cost_bps":1.0,"family":"ma_cross","fast":8,"mode":"long_only","slow":120,"universe":"d05_universe","weights":"equal"} | 0.760879 | 0.0650308 | 0.832515 | 0.385912 | 0.309479 | 0.029 | true | 0.382609 | FAIL | 2024-01-02 | 2026-09-30 | 689 | 0.680622 |

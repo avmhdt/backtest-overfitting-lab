@@ -7,4 +7,5 @@ nav:
   - Home: index.md
   - Trial-log contract: trial-log.md
   - Validation: validation.md
+  - Reference power: theory/power.md
   - Decisions: decisions.md

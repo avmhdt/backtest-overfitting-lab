@@ -1,0 +1,31 @@
+projects:
+  - name: equity-factor-pipeline
+    dir: ${OLAB_EQUITY_FACTOR_PIPELINE_DIR}
+    trial_log: results/trial_log.csv
+    families: null          # null = all families in the log
+    selected: null          # null = x_selected column if present, else max sharpe_annual
+  - name: llm-text-alpha
+    dir: ${OLAB_LLM_TEXT_ALPHA_DIR}
+    trial_log: results/trial_log.csv
+    families: null
+    selected: null
+  - name: stat-arb-pairs
+    dir: ${OLAB_STAT_ARB_PAIRS_DIR}
+    trial_log: results/trial_log.csv
+    families: null
+    selected: null
+  - name: regime-portfolio-construction
+    dir: ${OLAB_REGIME_PORTFOLIO_CONSTRUCTION_DIR}
+    trial_log: results/trial_log.csv
+    families: null
+    selected: null
+  - name: crypto-lob-alpha
+    dir: ${OLAB_CRYPTO_LOB_ALPHA_DIR}
+    trial_log: results/trial_log.csv
+    families: null          # daily crypto families carry x_periods_per_year = 365
+    selected: null
+  - name: market-making-sim
+    dir: ${OLAB_MARKET_MAKING_SIM_DIR}
+    trial_log: results/trial_log.csv
+    families: null          # daily crypto families carry x_periods_per_year = 365
+    selected: null

@@ -44,7 +44,7 @@ Raw and licensed data live in `data/`, which is git-ignored. Only download scrip
 
 ### Impresses hirers
 
-- [ ] Power curves: how large a true Sharpe, and how long a backtest, each test needs before it detects a signal.
+- [x] Power curves: how large a true Sharpe, and how long a backtest, each test needs before it detects a signal. (AC-H-01)
 - [ ] A table of naive vs deflated Sharpe for your own projects ([equity-factor-pipeline](https://github.com/avmhdt/equity-factor-pipeline), [llm-text-alpha](https://github.com/avmhdt/llm-text-alpha), [stat-arb-pairs](https://github.com/avmhdt/stat-arb-pairs)).
 - [ ] Packaged as a pip-installable library with docs and an interactive Sharpe-haircut page.
 - [ ] A short paper-style writeup a PM could read in ten minutes.

@@ -69,6 +69,7 @@ dev = [
     "mkdocs-material>=9.5",
     "mkdocstrings[python]>=0.26",
     "types-pyyaml>=6.0.12.20261030",
+    "types-openpyxl>=3.1.5.20261017",
 ]
 
 [tool.ruff]
@@ -107,7 +108,7 @@ mypy_path = "src:study/src"
 explicit_package_bases = true
 
 [[tool.mypy.overrides]]
-module = ["numba.*", "arch.*", "sklearn.*", "pyarrow.*"]
+module = ["numba.*", "arch.*", "sklearn.*", "pyarrow.*", "plotly.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

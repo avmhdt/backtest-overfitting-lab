@@ -6,12 +6,15 @@ import calendar
 import io
 import re
 import zipfile
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
 
 import httpx
 import polars as pl
+
+from overfitlab_study.data.manifest import write_manifest
 
 BASE_URL = "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/ftp"
 SMOKE_DATASET = "F-F_Research_Data_Factors"
@@ -103,6 +106,33 @@ def _to_date(stamp: str) -> tuple[date, str] | None:
         year, month = int(stamp[:4]), int(stamp[4:])
         return date(year, month, calendar.monthrange(year, month)[1]), "M"
     return None
+
+
+def ingest(
+    datasets: Sequence[str],
+    *,
+    client: httpx.Client,
+    raw_dir: Path,
+    processed_dir: Path,
+) -> dict[str, int]:
+    """Download each dataset and write factor_returns, with a manifest (DQ-09)."""
+    rows: dict[str, int] = {}
+    for dataset in datasets:
+        path = download(dataset, raw_dir, client)
+        frame = to_factor_returns(dataset, read_zip_text(path))
+        target = processed_dir / "factor_returns" / "source=french" / f"dataset={dataset}"
+        target.mkdir(parents=True, exist_ok=True)
+        frame.write_parquet(target / "part-0.parquet", compression="zstd")
+        rows[dataset] = frame.height
+        write_manifest(
+            raw_dir,
+            source="french",
+            files=[path],
+            row_counts={dataset: frame.height},
+            units="percent in source, decimal in factor_returns",
+            origin=dataset_url(dataset),
+        )
+    return rows
 
 
 def to_factor_returns(dataset: str, text: str) -> pl.DataFrame:
