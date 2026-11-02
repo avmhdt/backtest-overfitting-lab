@@ -421,7 +421,7 @@ def plot_html(rows: Sequence[Mapping[str, Any]], path: Path, tests: Sequence[str
     figure.update_yaxes(range=[-0.03, 1.03])
     figure.update_layout(height=190 * len(tests), template="simple_white")
     path.parent.mkdir(parents=True, exist_ok=True)
-    figure.write_html(path, include_plotlyjs="cdn", full_html=True)
+    figure.write_html(path, include_plotlyjs="cdn", full_html=True, div_id="power-curves")
 
 
 def run_check(
