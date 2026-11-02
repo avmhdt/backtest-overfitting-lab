@@ -139,7 +139,8 @@ def test_simulate_is_reproducible_and_covers_each_cell(config):
 
 def test_check_rows_mark_the_tolerance(config):
     cell = power.Cell(1.0, 3, 1)
-    results = {c: {t: np.array([0.0]) for t in power.TEST_ORDER} for c in config.check_cells}
+    tests = [*power.TEST_ORDER, "dsr_known_v"]
+    results = {c: {t: np.array([0.0]) for t in tests} for c in config.check_cells}
     results[cell]["psr"] = np.full(100, 0.8)
     rows = power.check_rows(results, config, quick=False)
     row = next(r for r in rows if r["test"] == "psr")
