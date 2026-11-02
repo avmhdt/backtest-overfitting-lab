@@ -126,6 +126,7 @@ def test_prose_quotes_the_current_tables(path: Path) -> None:
     stooq = _table("case_stooq")[0]
     osap = {row["window"]: row for row in _table("case_osap")}
     projects = [row for row in _table("own_projects") if row["verdict"]]
+    investment = next(row for row in projects if row["family"] == "investment")
     expected = [
         f"{float(noise['independent']['median_best_sr_annual']):.2f}",
         f"{float(noise['factory_gbm']['median_best_sr_annual']):.2f}",
@@ -136,7 +137,7 @@ def test_prose_quotes_the_current_tables(path: Path) -> None:
         if path.name == "README.md"
         else f"{float(projects[0]['n_raw_project']):.0f} trials",
         f"{osap['post_publication']['t_above_1_96']} ",
-        f"{float(next(row for row in projects if row['family'] == 'investment')['dsr_project_n']):.3f}",
+        f"{float(investment['dsr_project_n']):.3f}",
     ]
     for value in expected:
         assert value in text, value
