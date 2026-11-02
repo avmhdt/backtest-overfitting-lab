@@ -19,7 +19,7 @@ aqr/century/Commodities Momentum,440,0.292867,1.7734,false,0.382,0.00516144,98.2
 aqr/century/Commodities Carry,440,0.572601,3.46727,true,0.0052,0.380253,33.592
 aqr/century/Commodities Multi-style,440,0.753899,4.56508,true,0,0.590315,21.6984
 aqr/century/All Stock Selection Value,440,0.358751,2.17235,false,0.3152,0.0828174,76.9151
-aqr/century/All Stock Selection Multi-style,440,1.35436,8.20107,true,0,1.22203,9.77059
+aqr/century/All Stock Selection Multi-style,440,1.35436,8.20107,true,0,1.22203,9.77084
 aqr/century/All Macro Value,440,0.511509,3.09734,true,0.0358,0.30155,41.047
 aqr/century/All Macro Momentum,440,0.354238,2.14502,false,0.23,0.0769694,78.2718
 aqr/century/All Macro Carry,440,0.539499,3.26683,true,0.0164,0.342469,36.5209
@@ -29,7 +29,7 @@ aqr/century/All asset classes Value,440,0.450375,2.72716,false,0.0994,0.224189,5
 aqr/century/All asset classes Momentum,440,0.62961,3.81248,true,0.0034,0.448155,28.8203
 aqr/century/All asset classes Carry,440,0.539499,3.26683,true,0.0164,0.342469,36.5209
 aqr/century/All asset classes Defensive,440,0.872514,5.28334,true,0,0.716935,17.8311
-aqr/century/All asset classes Multi-style,440,1.3938,8.43989,true,0,1.26444,9.28145
+aqr/century/All asset classes Multi-style,440,1.3938,8.43989,true,0,1.26442,9.28279
 aqr/century/Equity indices Market,440,0.46877,2.83855,false,0.0694,0.244763,47.7862
 aqr/century/Fixed income Market,440,0.40472,2.4507,false,0.1356,0.156121,61.4249
 aqr/century/Commodities Market,440,0.258528,1.56546,false,0.5822,0.00387379,98.5016
@@ -43,7 +43,7 @@ aqr/century/Currencies Carry,440,0.411991,2.49473,false,0.1238,0.167453,59.3552
 aqr/century/Currencies Multi-style,440,0.529348,3.20536,true,0.012,0.327854,38.0645
 aqr/century/Currencies Value,440,0.525231,3.18043,true,0.0214,0.321857,38.7208
 aqr/century/Intl Stock Selection Value,440,0.607789,3.68034,true,0.0206,0.42015,30.8724
-aqr/century/Intl Stock Selection Multi-style,440,1.62095,9.81534,true,0,inf,-inf
+aqr/century/Intl Stock Selection Multi-style,440,1.62095,9.81534,true,0,1.50506,7.14979
 aqr/century/Intl Stock Selection Momentum,440,0.784136,4.74818,true,0,0.623051,20.5429
 aqr/century/Intl Stock Selection Defensive,440,1.07937,6.53593,true,0,0.939756,12.9349
 aqr/tsmom/TSMOM,440,0.904503,5.47704,true,0,0.754323,16.6036
