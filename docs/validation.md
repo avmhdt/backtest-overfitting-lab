@@ -30,8 +30,8 @@ Every value below is transcribed from the paper itself, with its page, table or 
 `olab-study sim power --check` compares each test with the closed forms in [the power page](theory/power.md). `reports/tables/power_check.csv` has every cell.
 
 - PSR, the Reality Check, SPA and StepM are within tolerance in all four cells, and the median PBO falls as the true Sharpe ratio rises.
-- **AC-W-02 is not met.** The DSR falls short of its reference in the three cells with N > 1. The reference treats V as known, while the DSR estimates it from the same trials, and a high maximum inflates that estimate.
-- The `dsr_known_v` rows fix V at 1/(T − 1), and they match the reference in all four cells. That supports the explanation. It does not close the criterion: they were added after the failure, and they are marked `diagnostic`. The owner decides what to do.
+- **AC-W-02 stays recorded as missed for the DSR**, by the owner's ruling. The DSR falls short of its reference in the three cells with N > 1. The reference treats V as known, while the DSR estimates it from the same trials, and a high maximum inflates that estimate.
+- The `dsr_known_v` rows fix V at 1/(T − 1), and they match the reference in all four cells. That diagnostic is post hoc: it supports the explanation, was added after the failure, is marked `diagnostic`, and does not count toward the criterion.
 
 ## Methods with no printed example
 

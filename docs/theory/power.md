@@ -24,6 +24,6 @@ The tests differ only in c.
 
 ## What the formulas leave out
 
-- The DSR reference treats V as known, at the null value 1/T. The DSR estimates V from the same trials, and the two differ a lot. A large best Sharpe ratio also inflates the sample variance, so the bar rises exactly when the maximum is high, which costs power, most of all at small N. `power_check.csv` reports both: `dsr` as used in practice, and a `dsr_known_v` diagnostic that fixes V at 1/(T − 1).
+- The DSR reference treats V as known, at the null value 1/T. The DSR estimates V from the same trials, and the two differ a lot. A large best Sharpe ratio also inflates the sample variance, so the bar rises exactly when the maximum is high, which costs power, most of all at small N. `power_check.csv` reports both: `dsr` as used in practice, which misses this reference, and a post hoc `dsr_known_v` diagnostic that fixes V at 1/(T − 1). The owner kept the miss as a finding, and the diagnostic does not count toward AC-W-02.
 - With N > 1, a rejection can come from a noise strategy. That is what these tests measure: whether anything in the set is real, not which one.
 - The haircut and PBO have no closed reference here. PBO is checked for its trend: the median must fall as the true Sharpe ratio rises.

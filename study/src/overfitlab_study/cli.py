@@ -26,7 +26,7 @@ from overfitlab_study.explog import config_hash, study_run
 from overfitlab_study.reports import write_table as report_table
 from overfitlab_study.settings import Settings
 from overfitlab_study.sims import leakage, noise, power
-from overfitlab_study.validation import arch_xcheck, papers
+from overfitlab_study.validation import arch_xcheck, papers, studentised_xcheck
 
 app = typer.Typer(no_args_is_help=True, add_completion=False, help=__doc__)
 data_app = typer.Typer(no_args_is_help=True, help="Ingest raw data to the schemas of the spec.")
@@ -316,6 +316,25 @@ def sim_noise(
             f"median PBO {row['median_pbo']:.3f}, PASS {row['seeds_pass']}"
         )
     typer.echo(f"AC-W-01: {criteria}")
+
+
+@validate_app.command("studentised")
+def validate_studentised(
+    n_boot: Annotated[int, typer.Option(help="Resamples per case.")] = 10_000,
+) -> None:
+    """Cross-check against bsds.m and StepwiseTest, with Octave and R in WSL."""
+    settings = Settings()
+    target = settings.olab_reports_dir / "validation" / "studentised_xcheck.csv"
+    with study_run("validate studentised", settings, params={"n_boot": n_boot}) as run:
+        rows = studentised_xcheck.run_all(
+            n_boot,
+            root=settings.interim_dir / "xcheck",
+            toolbox=settings.data_dir / "external" / "mfe-toolbox",
+        )
+        studentised_xcheck.write_report(rows, target)
+        criteria = studentised_xcheck.check_criteria(rows)
+        run.metrics.update(criteria)
+    typer.echo(f"AC-W-07: {criteria} -> {target}")
 
 
 @sim_app.command("power")

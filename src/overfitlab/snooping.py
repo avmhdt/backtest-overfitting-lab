@@ -288,6 +288,41 @@ def spa_test(
     )
 
 
+def stepdown_statistics(matrix: F64, plan: I64, block: float) -> tuple[F64, F64]:
+    r"""Return the studentised statistics and their recentred bootstrap values.
+
+    Parameters
+    ----------
+    matrix : numpy.ndarray
+        ``T x N`` per-period performance relative to the benchmark.
+    plan : numpy.ndarray
+        Bootstrap indices of shape ``(n_boot, T)``.
+    block : float
+        Mean block length, used by the variance kernel. NaN falls back to :math:`\sqrt{T}`.
+
+    Returns
+    -------
+    tstats : numpy.ndarray
+        :math:`t_k = \sqrt{T}\,\bar{d}_k / \hat{\omega}_k`, one per strategy.
+    simulated : numpy.ndarray
+        :math:`\sqrt{T}(\bar{d}^*_k - \bar{d}_k) / \hat{\omega}_k`, of shape ``(n_boot, N)``.
+
+    Examples
+    --------
+    >>> d = np.random.default_rng(0).normal(0.0, 0.01, (100, 3))
+    >>> plan = stationary_bootstrap_indices(100, 20, mean_block=2.0, rng=0)
+    >>> stepdown_statistics(d, plan, 2.0)[1].shape
+    (20, 3)
+    """
+    n_obs = matrix.shape[0]
+    root = math.sqrt(n_obs)
+    kernel_block = block if math.isfinite(block) else root
+    omega = np.sqrt(_long_run_variance(matrix, kernel_block))
+    means = matrix.mean(axis=0)
+    tstats = root * means / omega
+    return tstats, root * (_bootstrap_means(matrix, plan) - means) / omega
+
+
 def romano_wolf_stepdown(
     rel_perf: ArrayLike,
     *,
@@ -340,13 +375,7 @@ def romano_wolf_stepdown(
         raise ValueError("alpha must be in (0, 1)")
     matrix = as_matrix(rel_perf, name="rel_perf")
     plan, block = _resample_plan(matrix, n_boot, block_length, indices, rng)
-    n_obs = matrix.shape[0]
-    root = math.sqrt(n_obs)
-    kernel_block = block if math.isfinite(block) else math.sqrt(n_obs)
-    omega = np.sqrt(_long_run_variance(matrix, kernel_block))
-    means = matrix.mean(axis=0)
-    tstats = root * means / omega
-    simulated = root * (_bootstrap_means(matrix, plan) - means) / omega
+    tstats, simulated = stepdown_statistics(matrix, plan, block)
 
     order = np.argsort(-tstats, kind="stable")
     sorted_t = tstats[order]
