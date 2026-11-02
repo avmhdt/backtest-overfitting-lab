@@ -127,7 +127,7 @@ def deflated_sharpe_ratio(
 def dsr_from_returns(
     returns: ArrayLike, *, selected: int | None = None, n_trials: float | None = None
 ) -> DSRResult:
-    """Return the DSR of a ``T x N`` return matrix.
+    """Return the DSR of a ``T x N`` return matrix, from Bailey and Lopez de Prado (2014).
 
     ``N`` defaults to the number of columns and ``V`` is the sample variance of the
     per-period column Sharpe ratios. With a single column, ``V`` is the null variance of

@@ -332,6 +332,8 @@ class CombinatorialPurgedCV:
 def assemble_paths(cv: CombinatorialPurgedCV, oos_predictions: Sequence[Any]) -> F64:
     """Assemble per-split out-of-sample predictions into complete backtest paths.
 
+    The paths are those of combinatorial purged CV in Lopez de Prado (2018).
+
     Parameters
     ----------
     cv : CombinatorialPurgedCV

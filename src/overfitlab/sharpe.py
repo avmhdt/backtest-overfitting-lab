@@ -270,6 +270,8 @@ def probabilistic_sharpe_ratio(
 def psr_from_returns(returns: ArrayLike, *, sr_benchmark: float = 0.0) -> float:
     """Return the PSR of a return series, using its own moments.
 
+    The statistic is that of Bailey and Lopez de Prado (2012).
+
     Parameters
     ----------
     returns : array_like
