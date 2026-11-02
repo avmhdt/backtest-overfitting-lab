@@ -27,6 +27,9 @@ BLANK = {
     "pbo_note": None,
     "bhy_haircut_sr_annual": None,
     "verdict": None,
+    "n_raw_project": None,
+    "sr0_annual_project_n": None,
+    "dsr_project_n": None,
 }
 
 
@@ -42,9 +45,17 @@ def load_projects(path: Path = PROJECTS) -> list[dict[str, Any]]:
 
 
 def family_row(
-    name: str, log_path: Path, family: str, selected: str | None, status: str
+    name: str, log_path: Path, family: str, selected: str | None, status: str, n_project: float
 ) -> dict[str, Any]:
     report = ol.evaluate_trial_log(log_path, families=[family], selected=selected)
+    across_project = ol.deflated_sharpe_ratio(
+        report.sr,
+        report.n_obs,
+        n_trials=n_project,
+        var_trials=report.variance,
+        skew=report.skew,
+        kurtosis=report.kurtosis,
+    )
     clustered: float | None = None
     try:
         log = ol.read_trial_log(log_path).filter(families=[family])
@@ -65,6 +76,9 @@ def family_row(
         "pbo_note": None if report.pbo is not None else report.reasons["pbo"],
         "bhy_haircut_sr_annual": report.haircut_sr_annual,
         "verdict": report.verdict,
+        "n_raw_project": n_project,
+        "sr0_annual_project_n": ol.annualize_sharpe(across_project.sr0, report.periods_per_year),
+        "dsr_project_n": across_project.dsr,
     }
 
 
@@ -85,7 +99,11 @@ def project_rows(project: Mapping[str, Any], settings: Settings) -> list[dict[st
     rows: list[dict[str, Any]] = []
     for family in families:
         try:
-            rows.append(family_row(name, log_path, family, project["selected"], status))
+            rows.append(
+                family_row(
+                    name, log_path, family, project["selected"], status, log.n_trials(mode="raw")
+                )
+            )
         except ValueError as error:
             rows.append(
                 {"project": name, "status": f"not evaluated: {error}", **BLANK, "family": family}
