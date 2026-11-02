@@ -13,7 +13,7 @@ from overfitlab_study.config import load_study_config
 from overfitlab_study.data.smoke import run_smoke
 from overfitlab_study.explog import config_hash, study_run
 from overfitlab_study.settings import Settings
-from overfitlab_study.sims import leakage, noise
+from overfitlab_study.sims import leakage, noise, power
 from overfitlab_study.validation import arch_xcheck, papers
 
 app = typer.Typer(no_args_is_help=True, add_completion=False, help=__doc__)
@@ -126,6 +126,43 @@ def sim_noise(
             f"median PBO {row['median_pbo']:.3f}, PASS {row['seeds_pass']}"
         )
     typer.echo(f"AC-W-01: {criteria}")
+
+
+@sim_app.command("power")
+def sim_power(
+    check: Annotated[bool, typer.Option("--check", help="Only the cells of AC-W-02.")] = False,
+    quick: Annotated[bool, typer.Option("--quick", help="Reduced size for CI.")] = False,
+) -> None:
+    """Measure how much signal and history each test needs."""
+    settings = Settings()
+    study = load_study_config()
+    config = power.PowerConfig.from_mapping(study, quick)
+    params = {"check": check, "quick": quick, "master_seed": settings.olab_seed}
+    with study_run("sim power", settings, params=params, config=study["power"]) as run:
+        if check:
+            rows, criteria = power.run_check(
+                config,
+                master_seed=settings.olab_seed,
+                reports_dir=settings.olab_reports_dir,
+                quick=quick,
+            )
+        else:
+            rows, criteria = power.run_grid(
+                config,
+                master_seed=settings.olab_seed,
+                reports_dir=settings.olab_reports_dir,
+                docs_dir=Path("docs"),
+            )
+        run.metrics.update(criteria)
+    typer.echo(f"{len(rows)} rows: {criteria}")
+    if check:
+        for row in rows:
+            if not row["within_tolerance"]:
+                typer.echo(
+                    f"outside: {row['test']} SR {row['true_sharpe_annual']} "
+                    f"{row['years']}y N={row['n_trials']}: {row['empirical']:.3f} "
+                    f"vs {row['reference']:.3f}"
+                )
 
 
 @validate_app.command("arch")
