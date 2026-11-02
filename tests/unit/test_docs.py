@@ -4,15 +4,18 @@ from __future__ import annotations
 
 import inspect
 import re
+import runpy
 import subprocess
 import sys
+import tomllib
 from pathlib import Path
 
 import pytest
 
 import overfitlab
 
-DOCS = Path(__file__).parents[2] / "docs"
+ROOT = Path(__file__).parents[2]
+DOCS = ROOT / "docs"
 
 
 def _public_functions() -> list[str]:
@@ -92,3 +95,13 @@ def test_import_stays_light() -> None:
         [sys.executable, "-c", probe], capture_output=True, text=True, check=True
     )
     assert result.stdout.strip() == "[]"
+
+
+def test_readme_quickstart_runs() -> None:
+    smoke = runpy.run_path(str(ROOT / "scripts" / "smoke_install.py"))
+    assert smoke["run_quickstart"](ROOT / "README.md") == "0.9004"
+
+
+def test_version_is_the_same_in_both_places() -> None:
+    project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    assert project["project"]["version"] == overfitlab.__version__
