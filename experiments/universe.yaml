@@ -1,0 +1,36 @@
+# Case-study universe (D-05). The nine U.S. ETFs come from Sharadar SFP, cross-checked against
+# the local Stooq snapshot, which is also their fallback. FX and the index always come from Stooq.
+stooq_snapshot: "2026-10-30"
+
+etfs:                            # Sharadar ticker: Stooq ticker
+  spy: spy.us
+  qqq: qqq.us
+  iwm: iwm.us
+  efa: efa.us
+  eem: eem.us
+  tlt: tlt.us
+  ief: ief.us
+  gld: gld.us
+  dbc: dbc.us
+
+fx: [eurusd, usdjpy]
+
+index: [^ndx]                    # ^spx is not in the snapshot; nearest available, recorded in decisions.md
+
+# DQ-06: a close from the unadjusted tape, compared with the snapshot and with closeadj.
+adjustment_checks:
+  stooq: {symbol: spy.us, date: "2005-02-25", unadjusted_close: 120.0}
+  sharadar: {symbol: spy, date: "2005-02-25"}
+
+french:
+  datasets:
+    - F-F_Research_Data_Factors_daily
+    - F-F_Momentum_Factor_daily
+    - 49_Industry_Portfolios_daily
+    - F-F_Research_Data_Factors
+
+aqr:
+  - {dataset: century, file: Century of Factor Premia Monthly.xlsx, sheet: Century of Factor Premia}
+  - {dataset: tsmom, file: Time Series Momentum Factors Monthly.xlsx, sheet: TSMOM Factors}
+  - {dataset: bab, file: Betting Against Beta Equity Factors Monthly.xlsx, sheet: BAB Factors, columns: [USA, Global]}
+  - {dataset: qmj, file: Quality Minus Junk Factors Monthly.xlsx, sheet: QMJ Factors, columns: [USA, Global]}

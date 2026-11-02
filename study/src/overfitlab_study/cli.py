@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import date
 from pathlib import Path
 from typing import Annotated
 
@@ -9,9 +10,20 @@ import httpx
 import typer
 
 from overfitlab_study import bench as bench_module
+from overfitlab_study.cases import factors as case_factors_module
+from overfitlab_study.cases import osap as case_osap_module
+from overfitlab_study.cases import projects as projects_module
+from overfitlab_study.cases import stooq_factory
+from overfitlab_study.cases.universe import load_universe
 from overfitlab_study.config import load_study_config
+from overfitlab_study.data import aqr as aqr_module
+from overfitlab_study.data import french as french_module
+from overfitlab_study.data import osap as osap_module
+from overfitlab_study.data import sharadar as sharadar_module
+from overfitlab_study.data import stooq as stooq_module
 from overfitlab_study.data.smoke import run_smoke
 from overfitlab_study.explog import config_hash, study_run
+from overfitlab_study.reports import write_table as report_table
 from overfitlab_study.settings import Settings
 from overfitlab_study.sims import leakage, noise, power
 from overfitlab_study.validation import arch_xcheck, papers
@@ -23,6 +35,8 @@ validate_app = typer.Typer(no_args_is_help=True, help="Check against published n
 app.add_typer(validate_app, name="validate")
 sim_app = typer.Typer(no_args_is_help=True, help="Simulations with known ground truth.")
 app.add_typer(sim_app, name="sim")
+case_app = typer.Typer(no_args_is_help=True, help="Real-data case studies.")
+app.add_typer(case_app, name="case")
 
 GOLDEN_CASES = Path("tests/golden/paper_examples.yaml")
 
@@ -46,6 +60,182 @@ def data_smoke() -> None:
     typer.echo(f"french: {result.french_rows} rows through {result.french_last_date}")
     for item in result.missing:
         typer.echo(f"missing: {item}")
+
+
+@data_app.command("stooq")
+def data_stooq(
+    stooq_dir: Annotated[Path | None, typer.Option(help="Snapshot folder.")] = None,
+) -> None:
+    """Convert the universe from the owner's local Stooq snapshot."""
+    settings = Settings()
+    folder = stooq_dir or settings.stooq_dir
+    if folder is None or not folder.is_dir():
+        typer.echo(f"error: Stooq snapshot not found: {folder}", err=True)
+        raise typer.Exit(code=1)
+    universe = load_universe()
+    etfs = list(universe["etfs"].values())
+    symbols = [*etfs, *universe["fx"], *universe["index"]]
+    item = universe["adjustment_checks"]["stooq"]
+    check = stooq_module.AdjustmentCheck(
+        item["symbol"], date.fromisoformat(item["date"]), item["unadjusted_close"]
+    )
+    with study_run("data stooq", settings, params={"symbols": symbols}) as run:
+        rows = stooq_module.ingest(
+            folder,
+            symbols=symbols,
+            adjusted=dict.fromkeys(etfs, True),
+            checks=[check],
+            snapshot=universe["stooq_snapshot"],
+            raw_dir=settings.raw_dir / "stooq",
+            interim_dir=settings.interim_dir,
+            processed_dir=settings.processed_dir,
+        )
+        run.metrics.update(rows=sum(rows.values()))
+    typer.echo(f"stooq: {sum(rows.values())} rows for {len(rows)} symbols")
+
+
+@data_app.command("sharadar")
+def data_sharadar() -> None:
+    """Pull U.S. ETF prices from Sharadar SFP."""
+    settings = Settings()
+    universe = load_universe()
+    symbols = list(universe["etfs"])
+    item = universe["adjustment_checks"]["sharadar"]
+    try:
+        with study_run("data sharadar", settings, params={"symbols": symbols}) as run:
+            with httpx.Client() as client:
+                rows = sharadar_module.ingest(
+                    symbols,
+                    settings,
+                    client,
+                    check_symbol=item["symbol"],
+                    check_day=date.fromisoformat(item["date"]),
+                )
+            run.metrics.update(rows=sum(rows.values()))
+    except sharadar_module.MissingKeyError as error:
+        typer.echo(f"error: {error}", err=True)
+        raise typer.Exit(code=1) from error
+    agreement = sharadar_module.crosscheck(universe["etfs"], settings.processed_dir)
+    if agreement:
+        report_table(agreement, settings.olab_reports_dir / "tables" / "sharadar_stooq_xcheck.csv")
+    typer.echo(f"sharadar: {sum(rows.values())} rows for {len(rows)} symbols")
+
+
+@data_app.command("french")
+def data_french() -> None:
+    """Download the Ken French datasets of the universe."""
+    settings = Settings()
+    datasets = load_universe()["french"]["datasets"]
+    with study_run("data french", settings, params={"datasets": datasets}) as run:
+        with httpx.Client() as client:
+            rows = french_module.ingest(
+                datasets,
+                client=client,
+                raw_dir=settings.raw_dir / "french",
+                processed_dir=settings.processed_dir,
+            )
+        run.metrics.update(rows)
+    typer.echo(f"french: {rows}")
+
+
+@data_app.command("aqr")
+def data_aqr(
+    folder: Annotated[Path | None, typer.Option("--dir", help="Workbook folder.")] = None,
+) -> None:
+    """Parse the AQR workbooks named in the universe."""
+    settings = Settings()
+    workbooks = aqr_module.workbooks_from_config(load_universe()["aqr"])
+    with study_run("data aqr", settings) as run:
+        rows = aqr_module.ingest(
+            workbooks,
+            aqr_dir=folder or settings.raw_dir / "aqr",
+            interim_dir=settings.interim_dir,
+            processed_dir=settings.processed_dir,
+        )
+        run.metrics.update(rows)
+    typer.echo(f"aqr: {rows}")
+
+
+@data_app.command("osap")
+def data_osap(
+    release: Annotated[str | None, typer.Option(help="OSAP release.")] = None,
+) -> None:
+    """Parse the owner's Open Source Asset Pricing files."""
+    settings = Settings()
+    version = release or load_study_config()["cases"]["osap"]["release"]
+    with study_run("data osap", settings, params={"release": version}) as run:
+        rows = osap_module.ingest(
+            release=version,
+            osap_dir=settings.raw_dir / "osap",
+            interim_dir=settings.interim_dir,
+            processed_dir=settings.processed_dir,
+        )
+        run.metrics.update(rows)
+    typer.echo(f"osap: {rows}")
+
+
+@case_app.command("stooq")
+def case_stooq() -> None:
+    """Run the factory on the universe, with logged trials and one holdout."""
+    settings = Settings()
+    study = load_study_config()
+    section = study["cases"]["stooq"]
+    with study_run("case stooq", settings, params=section) as run:
+        row = stooq_factory.run(
+            universe=load_universe(),
+            grid=study["factory"]["grid"],
+            cost_bps=study["factory"]["cost_bps"],
+            holdout_years=section["holdout_years"],
+            processed_dir=settings.processed_dir,
+            results_dir=settings.olab_results_dir,
+            reports_dir=settings.olab_reports_dir,
+        )
+        run.metrics.update(row)
+    typer.echo(f"case stooq: {row}")
+
+
+@case_app.command("factors")
+def case_factors() -> None:
+    """StepM survivors and haircuts across French and AQR factors."""
+    settings = Settings()
+    datasets = [item["dataset"] for item in load_universe()["aqr"]]
+    with study_run("case factors", settings, params={"aqr": datasets}) as run:
+        summary = case_factors_module.run(
+            aqr_datasets=datasets,
+            processed_dir=settings.processed_dir,
+            reports_dir=settings.olab_reports_dir,
+        )
+        run.metrics.update(summary)
+    typer.echo(f"case factors: {summary}")
+
+
+@case_app.command("osap")
+def case_osap() -> None:
+    """Count the published predictors that survive multiple-testing corrections."""
+    settings = Settings()
+    release = load_study_config()["cases"]["osap"]["release"]
+    with study_run("case osap", settings, params={"release": release}) as run:
+        rows = case_osap_module.run(
+            release=release,
+            processed_dir=settings.processed_dir,
+            reports_dir=settings.olab_reports_dir,
+        )
+        run.metrics.update(rows[0])
+    for row in rows:
+        typer.echo(f"case osap: {row}")
+
+
+@app.command()
+def projects(
+    config: Annotated[Path, typer.Option(help="Project list.")] = projects_module.PROJECTS,
+) -> None:
+    """Write the naive against deflated table for the owner's own projects."""
+    settings = Settings()
+    with study_run("projects", settings, params={"config": str(config)}) as run:
+        rows = projects_module.run(settings, config)
+        run.metrics.update(evaluated=sum(row["dsr"] is not None for row in rows))
+    for row in rows:
+        typer.echo(f"{row['project']}: {row['status']}")
 
 
 @validate_app.command("papers")

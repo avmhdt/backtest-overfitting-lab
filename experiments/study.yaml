@@ -65,4 +65,4 @@ verdict:                         # D-06
 
 cases:
   stooq: {universe: experiments/universe.yaml, holdout_years: 3}
-  osap: {release: null, weighting: vw}
+  osap: {release: "2026.10", weighting: op}    # op: each original paper's own weighting
