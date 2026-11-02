@@ -150,7 +150,7 @@ def test_cpcv_counts_match_the_formula(n, k):
 
 
 def test_cpcv_six_two_is_fifteen_splits_and_five_paths():
-    # G-07. The book is not available, so docs/validation.md marks the case pending.
+    # G-07, also in the golden cases: AFML, section 12.4.1, p. 164.
     cv = ol.CombinatorialPurgedCV(6, 2, t1=np.arange(60))
     assert (cv.n_splits, cv.n_paths) == (15, 5)
 

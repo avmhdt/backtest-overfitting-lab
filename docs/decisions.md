@@ -40,7 +40,7 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 
 - **AC-W-07 stays open.** The owner asked for a stricter check. The raw-against-raw comparison with `arch` is kept as evidence and does not close the criterion. The limit is unchanged. An independent reference that really studentises is needed; the candidates are in [validation](validation.md).
 - **G-03c is a documented exception to AC-W-03.** The tolerance is unchanged and the case still reports `pass=false`. It misses by 5e-6 because the paper feeds an input printed to three decimals, so the exception covers this one case and no other. The AC-W-03 row of the local spec records it.
-- **G-07 stays `pending-source`** until the owner supplies the chapter and page in *Advances in Financial Machine Learning*. Nothing is transcribed until then.
+- **G-07 is sourced** (2026-11-02): *Advances in Financial Machine Learning*, chapter 12, section 12.4.1, p. 164, with Figures 12.1 and 12.2, checked in the owner's copy. Only the two counts and the citation are recorded.
 - **Deviation from P-02:** the repo's default workflow permission stays at `read`, not read/write as P-02 asks. Workflows declare their own `permissions:`, so M1 to M4 do not need the default raised.
 
 ## Agent decisions
@@ -71,7 +71,7 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **M3, `planted_signal_prices`:** the trend oracle is `ma_cross` 10/60 and the mean-reversion oracle is `mean_reversion` 20, 1.0, 0.0, both long-short. The amplitude is calibrated by bisection on one seeded 100,000-bar path, before costs.
 - **M3, `bootstrap.py`:** arrives in M3 instead of M4, because `block_bootstrap_returns` needs it.
 - **M3, generators:** `gaussian_noise` and `student_t_noise` always return `T x N`, including when `N = 1`. `gbm_prices` returns `n_obs` prices, so a run of `T` returns needs `T + 1` prices.
-- **M3, G-07:** stays `pending-source`; see the owner's ruling above. `tests/unit/test_cv.py` asserts 15 splits and 5 paths against the formula in FR-09.
+- **M3, G-07:** see the owner's rulings above. `tests/unit/test_cv.py` also asserts 15 splits and 5 paths against the formula in FR-09.
 - **M4, `arch` comparison:** `arch` 8 does not studentise, so the 0.02 and 1e-8 checks compare the Reality Check and `spa_test(studentize=False)` with `arch`. This is evidence and does not close AC-W-07; see the owner's ruling above. The studentised gap is reported as `max_studentised_gap`. `studentize` is an added keyword on `spa_test`, and its default is Hansen's statistic.
 - **M4, PBO:** rows beyond the last whole block are dropped, as in the paper. A logit of exactly zero counts toward PBO, as the spec's `λ ≤ 0` says.
 - **M4, block length:** the default is the median Politis-White length over the columns. The gate uses one set of resamples for SPA and the stepdown.

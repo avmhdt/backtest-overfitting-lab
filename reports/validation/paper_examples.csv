@@ -37,4 +37,5 @@ G-06k,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts J
 G-06l,"Lo (2002), The Statistics of Sharpe Ratios, Table 2, Financial Analysts Journal 58(4), p. 41",10.21,10.205,0.00495923,0.005,true,Printed to two decimals
 G-08a,"Harvey, Liu and Zhu (2016), ... and the Cross-Section of Expected Returns, Review of Financial Studies 29(1), p. 20",3.78,3.77779,0.00221258,0.005,true,Bonferroni benchmark over 316 factors by 2012
 G-08b,"Harvey, Liu and Zhu (2016), ... and the Cross-Section of Expected Returns, Review of Financial Studies 29(1), conclusion",0.27,0.26998,2.03937e-05,0.005,true,The 3.0 hurdle corresponds to a p-value of 0.27%
-G-07,"Lopez de Prado (2018), Advances in Financial Machine Learning, chapter 12",,,,0,pending-source,The book is not available to the agent. Added with cv.py in M3.
+G-07a,"Lopez de Prado (2018), Advances in Financial Machine Learning, Wiley, chapter 12, section 12.4.1 ""Combinatorial Splits"", p. 164, with Figures 12.1 and 12.2",15,15,0,0,true,"Checked in the owner's copy of the book, 2026-11-02"
+G-07b,"Lopez de Prado (2018), Advances in Financial Machine Learning, Wiley, chapter 12, section 12.4.1 ""Combinatorial Splits"", p. 164, with Figures 12.1 and 12.2",5,5,0,0,true,"Checked in the owner's copy of the book, 2026-11-02"

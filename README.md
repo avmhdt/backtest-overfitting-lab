@@ -39,7 +39,7 @@ Raw and licensed data live in `data/`, which is git-ignored. Only download scrip
 
 - [x] On pure noise, the best of 1,000 strategies shows a high naive Sharpe while the DSR is not significant and PBO is near or above 0.5. (AC-W-01)
 - [ ] On planted-signal data, each test detects the signal at roughly its theoretical power.
-- [ ] Implementations reproduce the numerical examples in the original papers to three decimals.
+- [x] Implementations reproduce the numerical examples in the original papers to three decimals. (AC-W-03, with G-03c as a documented exception)
 - [x] A simulation shows the accuracy gap between standard k-fold and purged k-fold on overlapping labels. (AC-W-04)
 
 ### Impresses hirers
