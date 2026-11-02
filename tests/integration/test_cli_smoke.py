@@ -56,6 +56,8 @@ def test_library_help(args):
         ["sim", "leakage", "--help"],
         ["sim", "noise", "--help"],
         ["bench", "--help"],
+        ["figures", "--help"],
+        ["all", "--help"],
     ],
 )
 def test_study_help(args):

@@ -63,7 +63,7 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --locked
-      - run: uv run pytest -m "not data and not bench and not slow" --cov --cov-report=
+      - run: uv run pytest -m "not data and not bench and not slow and not xcheck" --cov --cov-report=
       - run: uv run coverage report --include="src/overfitlab/*" --fail-under=90
       - run: uv run coverage report --include="study/src/*" --fail-under=75
 

@@ -97,4 +97,6 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **M5, `git_sha`:** a study run records the commit it started from, and `results/` and `reports/` do not mark it dirty.
 - **`validate studentised`:** a command added to section 10 of the spec for the owner's AC-W-07 ruling. It runs locally because it needs Octave and R, and CI keeps the `arch` comparison. `bsds.m` is pinned to commit `9622b6c546bc` and kept out of the repo, because the toolbox has no licence file. `StepwiseTest` installs into the WSL user library through `scripts/r/install_stepwise.R`.
 - **`.env`:** `STOOQ_DIR` was added on 2026-11-02, as the owner approved, so `data stooq` no longer needs `--stooq-dir`. The key was not read.
+- **M6, CI:** the coverage job took 44 minutes because it ran the `xcheck` tests through pure-Python loops. It now leaves them to `study-quick`, which runs them with Numba on.
+- **M6, `all`:** runs the study commands on the tables already in `data/`. Ingest stays separate, because Sharadar and French need the network, and a missing table skips the case studies with a message. `--quick` also skips `validate arch`, which CI runs at full size, and `bench`, because timings differ on every run. `validate studentised` is not part of `all`, because it needs Octave and R.
 
