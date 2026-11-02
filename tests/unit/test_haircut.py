@@ -31,6 +31,15 @@ def test_one_test_leaves_bonferroni_unchanged():
     assert result.haircut_pct == pytest.approx(0.0, abs=1e-9)
 
 
+@pytest.mark.parametrize(("sr_annual", "years"), [(3.0, 20), (5.0, 20), (12.0, 50), (40.0, 50)])
+def test_strong_sharpe_ratio_keeps_a_finite_haircut(sr_annual, years):
+    result = ol.haircut_sharpe(
+        sr_annual, years * 12, periods_per_year=12, n_tests=100, method="bonferroni"
+    )
+    assert 0.0 < result.haircut_sr_annual <= sr_annual
+    assert 0.0 <= result.haircut_pct < 100.0
+
+
 def test_pvalue_is_two_sided_student_t():
     result = ol.haircut_sharpe(1.0, 120, periods_per_year=12, n_tests=5, method="bonferroni")
     assert result.pvalue == pytest.approx(2 * stats.t.sf(result.tstat, 119))

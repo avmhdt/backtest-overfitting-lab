@@ -1,0 +1,64 @@
+.calc fieldset {
+  border: 1px solid var(--md-default-fg-color--lighter);
+  border-radius: 0.2rem;
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.8rem 0.8rem;
+}
+
+.calc legend {
+  font-weight: 700;
+  padding: 0 0.3rem;
+}
+
+.calc-grid {
+  display: grid;
+  gap: 0.6rem 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+}
+
+.calc label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  justify-content: flex-end;
+}
+
+.calc input,
+.calc select {
+  background: var(--md-default-bg-color);
+  border: 1px solid var(--md-default-fg-color--light);
+  border-radius: 0.1rem;
+  color: var(--md-typeset-color);
+  box-sizing: border-box;
+  font: inherit;
+  height: 1.9rem;
+  padding: 0 0.35rem;
+  width: 100%;
+}
+
+.calc input:focus-visible,
+.calc select:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 1px;
+}
+
+.calc-problems {
+  color: var(--md-typeset-color);
+  font-weight: 700;
+  min-height: 1.4em;
+}
+
+.calc table {
+  display: table;
+  width: 100%;
+}
+
+.calc table caption {
+  font-weight: 700;
+  text-align: left;
+}
+
+.calc table output {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

@@ -27,6 +27,11 @@ plugins:
             show_root_toc_entry: false
             heading_level: 3
             merge_init_into_class: true
+extra_css:
+  - stylesheets/calculator.css
+extra_javascript:
+  - path: javascripts/sharpe_calc.js
+    type: module
 nav:
   - Home: index.md
   - Getting started: getting-started.md
