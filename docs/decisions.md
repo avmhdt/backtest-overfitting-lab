@@ -100,3 +100,4 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **M6, CI:** the coverage job took 44 minutes because it ran the `xcheck` tests through pure-Python loops. It now leaves them to `study-quick`, which runs them with Numba on.
 - **M6, `all`:** runs the study commands on the tables already in `data/`. Ingest stays separate, because Sharadar and French need the network, and a missing table skips the case studies with a message. `--quick` also skips `validate arch`, which CI runs at full size, and `bench`, because timings differ on every run. `validate studentised` is not part of `all`, because it needs Octave and R.
 
+- **M6, docs:** theory pages quote the committed tables, and `tests/unit/test_docs.py` checks the API page against `__all__`, the docstring sections, the word limit and the getting-started examples. `import overfitlab` is tested not to load pyarrow, typer or Polars, and its time stays in `olab-study bench`.
