@@ -30,8 +30,8 @@ Every value below is transcribed from the paper itself, with its page, table or 
 `olab-study sim power --check` compares each test with the closed forms in [the power page](theory/power.md). `reports/tables/power_check.csv` has every cell.
 
 - PSR, the Reality Check, SPA and StepM are within tolerance in all four cells, and the median PBO falls as the true Sharpe ratio rises.
-- **AC-W-02 is not met.** The DSR falls short of its reference in the three cells with N > 1. The reference treats V as known, while the DSR estimates it from the same trials, and a high maximum inflates that estimate.
-- The `dsr_known_v` rows fix V at 1/(T − 1), and they match the reference in all four cells. That supports the explanation. It does not close the criterion: they were added after the failure, and they are marked `diagnostic`. The owner decides what to do.
+- **AC-W-02 stays recorded as missed for the DSR**, by the owner's ruling. The DSR falls short of its reference in the three cells with N > 1. The reference treats V as known, while the DSR estimates it from the same trials, and a high maximum inflates that estimate.
+- The `dsr_known_v` rows fix V at 1/(T − 1), and they match the reference in all four cells. That diagnostic is post hoc: it supports the explanation, was added after the failure, is marked `diagnostic`, and does not count toward the criterion.
 
 ## Methods with no printed example
 
@@ -53,23 +53,28 @@ So the two are not the same statistic, and the check compares like with like thr
 
 The gap between Hansen's studentised SPA and `arch` is reported separately as `max_studentised_gap`. It is large on some null cases, and it should be: it measures a real difference between the two statistics.
 
-**AC-W-07 stays open.** These checks are evidence that the bootstrap and the recentring agree with `arch`. They say nothing about the studentised default, and the owner ruled on 2026-11-01 that they do not close the criterion.
+These checks are evidence that the bootstrap and the recentring agree with `arch`. They say nothing about the studentised default, and the owner ruled on 2026-11-01 that they do not close AC-W-07.
 
-### Candidates for a studentised reference
+### Cross-check with a studentising reference
 
-Each was read at source on 2026-11-01. None has been run, because none of the runtimes is installed here.
+The owner ruled the `arch` comparison evidence only, so `olab-study validate studentised` compares the studentised defaults with references that really studentise, on the same 20 cases at B = 10,000 and block length 5:
 
-| Candidate | Studentises? | Matches Hansen? | Access and licence | Assessment |
-|---|---|---|---|---|
-| `bsds.m`, MFE Toolbox (Sheppard) | Yes, it divides by the long-run standard deviation | Same kernel, the three recentrings and the log-log rule. It has no floor at zero on the statistic | Free. GNU Octave plus a clone of `bashtage/mfe-toolbox`. No licence file, only a copyright notice, so use it locally and never vendor it | **Recommended for SPA and the Reality Check** |
-| `StepwiseTest`, R (Hsu, Kuan and Yen) | Takes whatever statistics it is given | `FWERkControl` with k = 1 is the stepdown, so it checks the step logic only | Free. R, CRAN, GPL ≥ 2 | **Recommended for StepM**, fed the statistics |
-| `ForecastEval.jl` (Bowers) | Yes | Floor and recentrings match, but the variance is an Epanechnikov HAC estimator, as its own docs state | Free. Julia, MIT. Last commit 2021 | Second opinion only, since the variance differs by design |
-| MulCom 3.0, Ox (Hansen, Lunde and Laurent) | Not verified: the page does not say and the manual was not read | Hansen's own code, the strongest authority | The free Ox Console covers academic research and teaching only, and this project is neither, so it probably needs a paid licence, which is not approved. MulCom's own page states no terms | Needs the owner to check eligibility |
-| `RCtest`, R | Yes | No: moving-block bootstrap, and no lower, consistent and upper p-values in Hansen's sense | Free. R, GPL-3 | Rejected |
+- **SPA and the Reality Check:** `bsds.m` from the MFE Toolbox (Sheppard), under GNU Octave. It divides by the long-run standard deviation, with Hansen's kernel, recentrings and log-log rule. It runs unedited at commit `9622b6c546bc`. The toolbox has no licence file, so it is cloned under the git-ignored data root and never vendored.
+- **StepM:** `FWERkControl` with k = 1 from R's `StepwiseTest` 1.0. It takes supplied statistics, so it checks the stepdown logic and not the studentising.
 
-Proposed check, with the limits unchanged: the same 20 cases at B = 10,000 and block length 5, comparing `spa_test` with `bsds(..., 'STUDENTIZED')` on all three p-values at 0.02. For identical indices at 1e-8, a `stationary_bootstrap.m` placed ahead on the Octave path would return the indices of this library, with `bsds.m` itself unedited. StepM rejected sets would go through `FWERkControl`, at 19 of 20.
+The run needs Octave and R, so it is local and not part of CI. `reports/validation/studentised_xcheck.csv` has every case, and the experiment log holds the summary.
 
-**One known difference.** `bsds.m` has no floor at zero, so when every mean is negative it returns p = 1, where Hansen's floor gives a smaller value. One of the 20 cases is like this: case 2, where this library gives 0.716, 0.969 and 0.969. That case would exceed 0.02 for that reason alone, and how to treat it is the owner's call. `bsds.m` also shares an author with `arch`, though it is separate code that does studentise.
+| Check | Limit | All 20 cases | Without case 2 |
+|---|---|---|---|
+| Reality Check and the three SPA p-values, independent draws | at most 0.02 | 0.2742 | 0.013 |
+| The same, on identical resamples | at most 1e-8 | 0.2833 | 0.0 |
+| StepM rejected sets | at least 19 of 20 | 20 of 20 | |
+
+For identical resamples, a `stationary_bootstrap.m` placed ahead on the Octave path hands `bsds.m` the indices this library drew.
+
+**Case 2 misses the limit, and it is the only case that does.** No strategy in case 2 has a positive mean. Hansen's statistic is floored at zero, so `spa_test` asks how often a resample's maximum exceeds zero. `bsds.m` has no floor on its statistic, so the statistic is on the wrong side of every resample and all its p-values come out as 1. On identical resamples this library gives 0.7167, 0.9722 and 0.9722, against 1, 1 and 1. The limit is unchanged, and this difference comes from the definition of the statistic, not from a bootstrap or variance error. The other 19 cases agree exactly on identical resamples.
+
+`bsds.m` shares an author with `arch`, though it is separate code. MulCom, Hansen's own Ox code, was not used: its free Ox Console covers academic research and teaching only, and no paid licence is approved.
 
 ### PBO by hand
 

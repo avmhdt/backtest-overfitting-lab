@@ -43,6 +43,9 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **G-07 is sourced** (2026-11-02): *Advances in Financial Machine Learning*, chapter 12, section 12.4.1, p. 164, with Figures 12.1 and 12.2, checked in the owner's copy. Only the two counts and the citation are recorded.
 - **Deviation from P-02:** the repo's default workflow permission stays at `read`, not read/write as P-02 asks. Workflows declare their own `permissions:`, so M1 to M4 do not need the default raised.
 
+- **AC-W-02: the DSR miss is kept as a finding** (2026-11-02). The `dsr` rows of `power_check.csv` keep reporting the miss, and CI keeps the strict expected failure. The fixed-V diagnostic is post hoc and does not count toward the criterion. M5 proceeds on that basis, and the writeup must explain the cause.
+- **AC-W-07: Octave and R are approved** (2026-11-02). `bsds.m` under GNU Octave is the studentised reference for SPA and the Reality Check, and R's `StepwiseTest` for StepM. Case 2's miss is documented with its cause, the limit does not change, and no paid licence is approved.
+
 ## Agent decisions
 
 - **M1, `DATA_ROOT` on Windows:** `.env.example` is fixed by the spec and sets `DATA_ROOT` to a `~` path meant for WSL. On native Windows the settings loader ignores a `DATA_ROOT` that starts with `~`, so a copied `.env` cannot put project data on `C:`.
@@ -79,7 +82,7 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **M4, `TrialLogReport`:** gains `spa_pvalue` and `stepm_rejects_selected`.
 - **M4, clustered N:** average linkage, the number of clusters is scanned on up to 40 geometric steps, and a best mean silhouette below 0.05 counts as no structure, so every trial stays independent.
 - **M4, noise table:** `noise_experiment.csv` holds one summary row per setting. The per-seed values stay in the git-ignored `results/sims/noise/`.
-- **M5, AC-W-02 (needs the owner's ruling):** the three DSR rows with N > 1 miss the reference. `dsr` estimates V from the same trials, and the reference assumes V is known. `dsr_known_v`, a diagnostic with V fixed at 1/(T − 1), matches theory in all four cells. It was added after the failure, so it does not count toward the criterion, and the `dsr` rows still report `within_tolerance = false`. See [validation](validation.md).
+- **M5, AC-W-02:** the three DSR rows with N > 1 miss the reference, which the owner kept as a finding; see the rulings above. `dsr` estimates V from the same trials, and the reference assumes V is known. `dsr_known_v` fixes V at 1/(T − 1). It is post hoc: it was added after the failure, so it does not count.
 - **M5, power tests:** a test detects when it rejects on the best trial, whichever trial that is, because the reference power is the probability that the maximum clears the bar. PSR is the naive PSR of the best trial. The haircut rejects when the BHY adjusted p-value is at most α, with 1,000 simulated sets per replication. PBO "rejects" at most at 0.20, the D-06 limit.
 - **M5, power bootstrap:** block length 1, because the simulated returns are IID. The closed-form tests run 1,000 replications and the rest 500, per D-07. The PBO trend uses the SR grid at 5 years and N = 100.
 - **M5, `^spx`:** not in the Stooq snapshot, so `^ndx` is the nearest available index (D-05).
@@ -92,4 +95,6 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **M5, OSAP:** the owner supplied release 2026.10 of the OP set, so the `openassetpricing` package was not needed and nothing was downloaded twice. `cases.osap` in `study.yaml` now reads `release: "2026.10", weighting: op`, because that set uses each original paper's weighting, not value weighting throughout. Value weighting is not needed: the question is whether the published results survive, and the OP set is the published construction.
 - **M5, OSAP windows:** in-sample is the paper's sample years, and post-publication is after the publication year. For StepM a predictor's months with no portfolio are 0.0, which leaves its t-statistic unchanged. Predictors need 60 months in a window.
 - **M5, `git_sha`:** a study run records the commit it started from, and `results/` and `reports/` do not mark it dirty.
+- **`validate studentised`:** a command added to section 10 of the spec for the owner's AC-W-07 ruling. It runs locally because it needs Octave and R, and CI keeps the `arch` comparison. `bsds.m` is pinned to commit `9622b6c546bc` and kept out of the repo, because the toolbox has no licence file. `StepwiseTest` installs into the WSL user library through `scripts/r/install_stepwise.R`.
+- **`.env`:** `STOOQ_DIR` was added on 2026-11-02, as the owner approved, so `data stooq` no longer needs `--stooq-dir`. The key was not read.
 
