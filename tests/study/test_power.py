@@ -178,7 +178,10 @@ def test_power_check_quick(quick_check):
     rows, criteria = quick_check
     outside = [r for r in rows if r["test"] != "dsr" and not r["within_tolerance"]]
     assert outside == []
-    assert criteria["pbo_trend_ok"]
+    # Directional at 100 replications: PBO is flat near 0.5 for weak signals, so the rank
+    # correlation is noise here. AC-W-02 judges it on the full run.
+    medians = criteria["pbo_medians"]
+    assert medians[-1] < medians[0] - 0.25
 
 
 @pytest.mark.slow
