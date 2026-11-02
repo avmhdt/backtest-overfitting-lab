@@ -65,3 +65,11 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **M3, `bootstrap.py`:** arrives in M3 instead of M4, because `block_bootstrap_returns` needs it.
 - **M3, generators:** `gaussian_noise` and `student_t_noise` always return `T x N`, including when `N = 1`. `gbm_prices` returns `n_obs` prices, so a run of `T` returns needs `T + 1` prices.
 - **M3, G-07:** stays `pending-source`. The book is not available to the agent, and no primary text was found online. `tests/unit/test_cv.py` asserts 15 splits and 5 paths against the formula in FR-09. The rule against unsourced values keeps it out of AC-W-03 until someone transcribes it from the book.
+- **M4, AC-W-07 reading (needs the owner's confirmation):** `arch` 8 does not studentise, so the 0.02 and 1e-8 checks compare the Reality Check and `spa_test(studentize=False)` with `arch`. The studentised gap is reported as `max_studentised_gap` and was not used to pass or fail. The criterion's thresholds are unchanged. `studentize` is an added keyword on `spa_test`, and its default is Hansen's statistic. See [validation](validation.md).
+- **M4, PBO:** rows beyond the last whole block are dropped, as in the paper. A logit of exactly zero counts toward PBO, as the spec's `λ ≤ 0` says.
+- **M4, block length:** the default is the median Politis-White length over the columns. The gate uses one set of resamples for SPA and the stepdown.
+- **M4, `evaluate` needs at least nine observations for the snooping tests:** with fewer, `evaluate_trial_log` reports them as not computed.
+- **M4, `TrialLogReport`:** gains `spa_pvalue` and `stepm_rejects_selected`.
+- **M4, clustered N:** average linkage, the number of clusters is scanned on up to 40 geometric steps, and a best mean silhouette below 0.05 counts as no structure, so every trial stays independent.
+- **M4, noise table:** `noise_experiment.csv` holds one summary row per setting. The per-seed values stay in the git-ignored `results/sims/noise/`.
+

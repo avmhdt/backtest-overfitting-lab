@@ -13,8 +13,8 @@ from overfitlab_study.config import load_study_config
 from overfitlab_study.data.smoke import run_smoke
 from overfitlab_study.explog import config_hash, study_run
 from overfitlab_study.settings import Settings
-from overfitlab_study.sims import leakage
-from overfitlab_study.validation import papers
+from overfitlab_study.sims import leakage, noise
+from overfitlab_study.validation import arch_xcheck, papers
 
 app = typer.Typer(no_args_is_help=True, add_completion=False, help=__doc__)
 data_app = typer.Typer(no_args_is_help=True, help="Ingest raw data to the schemas of the spec.")
@@ -96,6 +96,53 @@ def sim_leakage(
     for row in rows:
         typer.echo(f"{row['row']}: {row['mean']:.4f} [{row['ci_low']:.4f}, {row['ci_high']:.4f}]")
     typer.echo(f"AC-W-04: {criteria}")
+
+
+@sim_app.command("noise")
+def sim_noise(
+    seeds: Annotated[int | None, typer.Option(help="Replications; default from config.")] = None,
+    quick: Annotated[bool, typer.Option("--quick", help="Reduced size for CI.")] = False,
+) -> None:
+    """Measure what the tests say about the best of many strategies on pure noise."""
+    settings = Settings()
+    study = load_study_config()
+    config = noise.NoiseConfig.from_mapping(study["noise"], study["factory"]["cost_bps"], quick)
+    count = config.seeds if seeds is None else seeds
+    params = {"seeds": count, "quick": quick, "master_seed": settings.olab_seed}
+    with study_run("sim noise", settings, params=params, config=study["noise"]) as run:
+        rows, criteria = noise.run(
+            config,
+            seeds=count,
+            master_seed=settings.olab_seed,
+            reports_dir=settings.olab_reports_dir,
+            results_dir=settings.olab_results_dir,
+            config_key=config_hash({**study["noise"], **params}),
+        )
+        run.metrics.update(criteria)
+    for row in rows:
+        typer.echo(
+            f"{row['setting']}: best SR {row['median_best_sr_annual']:.3f}, "
+            f"DSR<0.95 in {row['seeds_dsr_below_95']}/{row['n_seeds']}, "
+            f"median PBO {row['median_pbo']:.3f}, PASS {row['seeds_pass']}"
+        )
+    typer.echo(f"AC-W-01: {criteria}")
+
+
+@validate_app.command("arch")
+def validate_arch(
+    n_boot: Annotated[int, typer.Option(help="Resamples per case.")] = 10_000,
+) -> None:
+    """Cross-check the snooping tests against the independent arch package."""
+    settings = Settings()
+    target = settings.olab_reports_dir / "validation" / "arch_xcheck.csv"
+    with study_run("validate arch", settings, params={"n_boot": n_boot}) as run:
+        rows = arch_xcheck.run_all(n_boot)
+        arch_xcheck.write_report(rows, target)
+        criteria = arch_xcheck.check_criteria(rows)
+        run.metrics.update(criteria)
+    typer.echo(f"AC-W-07: {criteria} -> {target}")
+    if not arch_xcheck.passed(criteria):
+        raise typer.Exit(code=1)
 
 
 @app.command()

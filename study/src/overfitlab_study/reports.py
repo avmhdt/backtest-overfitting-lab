@@ -16,6 +16,7 @@ MUTED = "#52514e"
 GRID = "#e4e3df"
 SURFACE = "#fcfcfb"
 SERIES_1 = "#2a78d6"
+SERIES_2 = "#eb6834"
 
 
 def format_cell(value: Any) -> str:
