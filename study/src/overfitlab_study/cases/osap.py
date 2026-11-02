@@ -15,7 +15,7 @@ from scipy import stats
 
 import overfitlab as ol
 from overfitlab_study.data import tables
-from overfitlab_study.reports import GRID, INK, MUTED, SERIES_1, SURFACE, write_table
+from overfitlab_study.reports import GRID, INK, MUTED, SERIES_1, SERIES_2, SURFACE, write_table
 
 F64 = NDArray[np.float64]
 PERIODS_PER_YEAR = 12
@@ -128,28 +128,34 @@ def plot(rows: Sequence[dict[str, Any]], path: Path) -> None:
         "after_bhy": "After BHY",
         "after_stepm": "After StepM",
     }
-    row = rows[0]
+    by_window = {row["window"]: row for row in rows}
+    series = (
+        ("all", "Full history", SERIES_1),
+        ("post_publication", "After publication", SERIES_2),
+    )
     names = list(labels)
-    fig, ax = plt.subplots(figsize=(7.2, 2.8), facecolor=SURFACE)
+    fig, ax = plt.subplots(figsize=(7.2, 3.4), facecolor=SURFACE)
     ax.set_facecolor(SURFACE)
-    positions = np.arange(len(names))[::-1]
-    values = [row[name] for name in names]
-    ax.barh(positions, values, color=SERIES_1, height=0.55)
-    for position, value in zip(positions, values, strict=True):
-        ax.annotate(
-            str(value),
-            (value, position),
-            xytext=(4, 0),
-            textcoords="offset points",
-            va="center",
-            color=INK,
-            fontsize=9,
-        )
+    positions = np.arange(len(names))[::-1].astype(float)
+    for offset, (window, label, colour) in zip((0.19, -0.19), series, strict=True):
+        values = [by_window[window][name] for name in names]
+        ax.barh(positions + offset, values, height=0.34, color=colour, label=label)
+        for position, value in zip(positions + offset, values, strict=True):
+            ax.annotate(
+                str(value),
+                (value, position),
+                xytext=(4, 0),
+                textcoords="offset points",
+                va="center",
+                color=INK,
+                fontsize=9,
+            )
     ax.set_yticks(positions, [labels[name] for name in names], color=INK)
-    ax.set_xlabel(f"Predictors, out of {row['n_predictors']}", color=MUTED)
+    ax.set_xlabel(f"Predictors, out of {by_window['all']['n_predictors']}", color=MUTED)
     ax.tick_params(colors=MUTED, length=0)
     ax.grid(axis="x", color=GRID, linewidth=0.8)
     ax.set_axisbelow(True)
+    ax.legend(frameon=False, labelcolor=MUTED, fontsize=9, loc="lower right")
     for spine in ax.spines.values():
         spine.set_visible(False)
     fig.tight_layout()

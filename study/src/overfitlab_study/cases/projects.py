@@ -24,6 +24,7 @@ BLANK = {
     "sr0_annual": None,
     "dsr": None,
     "pbo": None,
+    "pbo_note": None,
     "bhy_haircut_sr_annual": None,
     "verdict": None,
 }
@@ -61,6 +62,7 @@ def family_row(
         "sr0_annual": report.sr0_annual,
         "dsr": report.dsr,
         "pbo": report.pbo,
+        "pbo_note": None if report.pbo is not None else report.reasons["pbo"],
         "bhy_haircut_sr_annual": report.haircut_sr_annual,
         "verdict": report.verdict,
     }
@@ -118,7 +120,14 @@ def plot(rows: Sequence[Mapping[str, Any]], path: Path) -> None:
     ax.tick_params(colors=MUTED, length=0)
     ax.grid(axis="x", color=GRID, linewidth=0.8)
     ax.set_axisbelow(True)
-    ax.legend(frameon=False, labelcolor=MUTED, fontsize=8)
+    ax.legend(
+        frameon=False,
+        labelcolor=MUTED,
+        fontsize=8,
+        ncol=2,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.12),
+    )
     for spine in ax.spines.values():
         spine.set_visible(False)
     fig.tight_layout()

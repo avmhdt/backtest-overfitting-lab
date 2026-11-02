@@ -25,6 +25,14 @@ Every value below is transcribed from the paper itself, with its page, table or 
 
 **Reference code details kept deliberately.** Bonferroni uses `n_tests` while Holm and BHY use `n_tests + 1`. BHY leaves the largest p-value unscaled. The reference code annualises daily data with 360 days; here `periods_per_year` is always explicit.
 
+## Planted-signal power
+
+`olab-study sim power --check` compares each test with the closed forms in [the power page](theory/power.md). `reports/tables/power_check.csv` has every cell.
+
+- PSR, the Reality Check, SPA and StepM are within tolerance in all four cells, and the median PBO falls as the true Sharpe ratio rises.
+- **AC-W-02 is not met.** The DSR falls short of its reference in the three cells with N > 1. The reference treats V as known, while the DSR estimates it from the same trials, and a high maximum inflates that estimate.
+- The `dsr_known_v` rows fix V at 1/(T − 1), and they match the reference in all four cells. That supports the explanation. It does not close the criterion: they were added after the failure, and they are marked `diagnostic`. The owner decides what to do.
+
 ## Methods with no printed example
 
 White's Reality Check, Hansen's SPA and the Romano–Wolf stepdown have no printed numbers, so they are checked against the independent `arch` package. PBO is checked against a hand-computed case and against the qualitative Monte Carlo results of Bailey et al. (2017).
