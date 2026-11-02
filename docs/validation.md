@@ -8,16 +8,16 @@ Every value below is transcribed from the paper itself, with its page, table or 
 |---|---|---|
 | G-01 | Bailey and López de Prado (2014), DSR example | Passes, plus the paper's N = 46 and Normal-returns cases |
 | G-02 | Bailey et al. (2014), MinBTL | Passes at printed precision. The paper prints "5 years"; the computed value is in the report |
-| G-03 | Bailey and López de Prado (2012), PSR example | Two of three pass; see below |
+| G-03 | Bailey and López de Prado (2012), PSR example | Two of three pass. G-03c is a documented exception; see below |
 | G-04 | Bailey and López de Prado (2012), MinTRL | Passes |
 | G-05 | Harvey and Liu (2015), Exhibit 5 | Passes |
 | G-06 | Lo (2002), Table 2 | Passes on twelve selected entries |
-| G-07 | López de Prado (2018), CPCV counts | Pending source: the book is not available to the build agent. The counts are asserted against the formula in FR-09 in `tests/unit/test_cv.py` |
+| G-07 | López de Prado (2018), CPCV counts | Pending source: the owner will supply the chapter and page. The counts are asserted against the formula in FR-09 in `tests/unit/test_cv.py` |
 | G-08 | Harvey, Liu and Zhu (2016) | Passes on the Bonferroni benchmark and on the p-value of the 3.0 hurdle |
 
 ## Known discrepancies
 
-**G-03c, PSR with three years of monthly data.** The paper prints 0.953. The computed value from the paper's printed input SR = 0.458 is 0.95351, which misses the 5e-4 tolerance by 5e-6. The tolerance was not changed. The most likely cause is rounding of the input: the paper feeds a value printed to three decimals. Figure 6 also prints an annual Sharpe ratio of 1.585, which gives a different rounded input, and `G-03c-alt` shows that one passes. That row is reported alongside G-03c and does not replace it.
+**G-03c, PSR with three years of monthly data.** The paper prints 0.953. The computed value from the paper's printed input SR = 0.458 is 0.95351, which misses the 5e-4 tolerance by 5e-6. The tolerance was not changed. The most likely cause is rounding of the input: the paper feeds a value printed to three decimals. Figure 6 also prints an annual Sharpe ratio of 1.585, which gives a different rounded input, and `G-03c-alt` shows that one passes. That row is reported alongside G-03c and does not replace it. The owner ruled G-03c a documented exception to AC-W-03 on 2026-11-01: it still reports `pass=false`, and the tolerance stands.
 
 **Exhibit 7 against the reference code.** Harvey and Liu's Exhibit 7 prints p₀ = 0.396, 0.444, 0.485, 0.601 and 0.840, while their reference `Haircut_SR.m` uses 0.3966, 0.4459, 0.4860, 0.5990 and 0.8390. This library uses the reference code's values, because Exhibit 5 was produced by that code.
 
@@ -43,7 +43,25 @@ So the two are not the same statistic, and the check compares like with like thr
 | Same resamples as `arch` (read from a twin sampler) | at most 1e-8 | see `arch_xcheck.csv` and the experiment log |
 | StepM rejected sets, studentised here and raw in `arch` | at least 19 of 20 | see `arch_xcheck.csv` and the experiment log |
 
-The gap between Hansen's studentised SPA and `arch` is reported separately as `max_studentised_gap`. It is large on some null cases, and it should be: it measures a real difference between the two statistics, not an error. Read literally, AC-W-07 compares this library's SPA with `arch` and would fail on that gap, so the owner should confirm this reading. See [decisions](decisions.md).
+The gap between Hansen's studentised SPA and `arch` is reported separately as `max_studentised_gap`. It is large on some null cases, and it should be: it measures a real difference between the two statistics.
+
+**AC-W-07 stays open.** These checks are evidence that the bootstrap and the recentring agree with `arch`. They say nothing about the studentised default, and the owner ruled on 2026-11-01 that they do not close the criterion.
+
+### Candidates for a studentised reference
+
+Each was read at source on 2026-11-01. None has been run, because none of the runtimes is installed here.
+
+| Candidate | Studentises? | Matches Hansen? | Access and licence | Assessment |
+|---|---|---|---|---|
+| `bsds.m`, MFE Toolbox (Sheppard) | Yes, it divides by the long-run standard deviation | Same kernel, the three recentrings and the log-log rule. It has no floor at zero on the statistic | Free. GNU Octave plus a clone of `bashtage/mfe-toolbox`. No licence file, only a copyright notice, so use it locally and never vendor it | **Recommended for SPA and the Reality Check** |
+| `StepwiseTest`, R (Hsu, Kuan and Yen) | Takes whatever statistics it is given | `FWERkControl` with k = 1 is the stepdown, so it checks the step logic only | Free. R, CRAN, GPL ≥ 2 | **Recommended for StepM**, fed the statistics |
+| `ForecastEval.jl` (Bowers) | Yes | Floor and recentrings match, but the variance is an Epanechnikov HAC estimator, as its own docs state | Free. Julia, MIT. Last commit 2021 | Second opinion only, since the variance differs by design |
+| MulCom 3.0, Ox (Hansen, Lunde and Laurent) | Not verified: the page does not say and the manual was not read | Hansen's own code, the strongest authority | The free Ox Console covers academic research and teaching only, and this project is neither, so it probably needs a paid licence, which is not approved. MulCom's own page states no terms | Needs the owner to check eligibility |
+| `RCtest`, R | Yes | No: moving-block bootstrap, and no lower, consistent and upper p-values in Hansen's sense | Free. R, GPL-3 | Rejected |
+
+Proposed check, with the limits unchanged: the same 20 cases at B = 10,000 and block length 5, comparing `spa_test` with `bsds(..., 'STUDENTIZED')` on all three p-values at 0.02. For identical indices at 1e-8, a `stationary_bootstrap.m` placed ahead on the Octave path would return the indices of this library, with `bsds.m` itself unedited. StepM rejected sets would go through `FWERkControl`, at 19 of 20.
+
+**One known difference.** `bsds.m` has no floor at zero, so when every mean is negative it returns p = 1, where Hansen's floor gives a smaller value. One of the 20 cases is like this: case 2, where this library gives 0.716, 0.969 and 0.969. That case would exceed 0.02 for that reason alone, and how to treat it is the owner's call. `bsds.m` also shares an author with `arch`, though it is separate code that does studentise.
 
 ### PBO by hand
 

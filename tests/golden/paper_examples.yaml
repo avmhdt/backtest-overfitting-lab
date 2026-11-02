@@ -80,7 +80,7 @@ cases:
     output: psr
     printed: 0.953
     tolerance: 0.0005
-    notes: "Three years instead of two. Known miss: computed 0.95351, 5e-6 past tolerance, from the input printed to three decimals. See docs/validation.md"
+    notes: "Three years instead of two. Known miss: computed 0.95351, 5e-6 past tolerance, from the input printed to three decimals. Documented exception, owner ruling 2026-11-01; see docs/decisions.md"
     known_discrepancy: true
   - id: G-03c-alt
     group: G-03
