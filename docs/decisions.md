@@ -36,6 +36,13 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 | D-12 | Docs host | Default stands: GitHub Pages. |
 | D-13 | Python versions | 3.12 and 3.13 in CI, `requires-python = ">=3.12"`. |
 
+## Owner rulings, 2026-11-01
+
+- **AC-W-07 stays open.** The owner asked for a stricter check. The raw-against-raw comparison with `arch` is kept as evidence and does not close the criterion. The limit is unchanged. An independent reference that really studentises is needed; the candidates are in [validation](validation.md).
+- **G-03c is a documented exception to AC-W-03.** The tolerance is unchanged and the case still reports `pass=false`. It misses by 5e-6 because the paper feeds an input printed to three decimals, so the exception covers this one case and no other. The AC-W-03 row of the local spec records it.
+- **G-07 stays `pending-source`** until the owner supplies the chapter and page in *Advances in Financial Machine Learning*. Nothing is transcribed until then.
+- **Deviation from P-02:** the repo's default workflow permission stays at `read`, not read/write as P-02 asks. Workflows declare their own `permissions:`, so M1 to M4 do not need the default raised.
+
 ## Agent decisions
 
 - **M1, `DATA_ROOT` on Windows:** `.env.example` is fixed by the spec and sets `DATA_ROOT` to a `~` path meant for WSL. On native Windows the settings loader ignores a `DATA_ROOT` that starts with `~`, so a copied `.env` cannot put project data on `C:`.
@@ -47,7 +54,7 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **M2, skewness and kurtosis:** moment ratios without a small-sample correction, matching `scipy.stats.skew` and `kurtosis(fisher=False)` defaults, which is what the PSR code in Bailey and López de Prado's appendix expects.
 - **M2, haircut conventions:** follows `Haircut_SR.m`, not the paper's Exhibit 7, where they differ; see [validation](validation.md). `haircut_sharpe` returns the autocorrelation-corrected Sharpe ratio in `sr_annual`, and `haircut_pct` is relative to it, as in Exhibit 5.
 - **M2, simulated golden tolerances:** the spec says Holm and BHY match "within the printed precision because they are simulated". The authors' values come from 2,000 unseeded runs, so half a unit of the third decimal is below their own noise. Tolerances are 3 standard deviations of a 2,000-run median, measured before any comparison with the printed values.
-- **M2, G-03c:** a known miss of 5e-6 past tolerance. The tolerance was left alone; see [validation](validation.md). This needs the owner's ruling for AC-W-03, which asks every sourced case to pass.
+- **M2, G-03c:** a known miss of 5e-6 past tolerance. The tolerance was left alone; see [validation](validation.md) and the owner's ruling above.
 - **M2, contract details settled before the freeze (D-11):**
   - `E_SHARPE` was added, because the spec's error list had no code for an unreadable `sharpe_annual`.
   - `W_SUMMARY_ONLY` was added. The Parquet files are git-ignored, so `overfitlab trials validate results/trial_log.csv` in a sibling's CI sees none. Such a log passes on its CSV checks with this warning. If any series exists, a missing one is `E_RETURNS_MISSING`.
@@ -64,8 +71,8 @@ Copied at M1 from the owner's `DECISIONS.md` (recorded 2026-10-31), which overri
 - **M3, `planted_signal_prices`:** the trend oracle is `ma_cross` 10/60 and the mean-reversion oracle is `mean_reversion` 20, 1.0, 0.0, both long-short. The amplitude is calibrated by bisection on one seeded 100,000-bar path, before costs.
 - **M3, `bootstrap.py`:** arrives in M3 instead of M4, because `block_bootstrap_returns` needs it.
 - **M3, generators:** `gaussian_noise` and `student_t_noise` always return `T x N`, including when `N = 1`. `gbm_prices` returns `n_obs` prices, so a run of `T` returns needs `T + 1` prices.
-- **M3, G-07:** stays `pending-source`. The book is not available to the agent, and no primary text was found online. `tests/unit/test_cv.py` asserts 15 splits and 5 paths against the formula in FR-09. The rule against unsourced values keeps it out of AC-W-03 until someone transcribes it from the book.
-- **M4, AC-W-07 reading (needs the owner's confirmation):** `arch` 8 does not studentise, so the 0.02 and 1e-8 checks compare the Reality Check and `spa_test(studentize=False)` with `arch`. The studentised gap is reported as `max_studentised_gap` and was not used to pass or fail. The criterion's thresholds are unchanged. `studentize` is an added keyword on `spa_test`, and its default is Hansen's statistic. See [validation](validation.md).
+- **M3, G-07:** stays `pending-source`; see the owner's ruling above. `tests/unit/test_cv.py` asserts 15 splits and 5 paths against the formula in FR-09.
+- **M4, `arch` comparison:** `arch` 8 does not studentise, so the 0.02 and 1e-8 checks compare the Reality Check and `spa_test(studentize=False)` with `arch`. This is evidence and does not close AC-W-07; see the owner's ruling above. The studentised gap is reported as `max_studentised_gap`. `studentize` is an added keyword on `spa_test`, and its default is Hansen's statistic.
 - **M4, PBO:** rows beyond the last whole block are dropped, as in the paper. A logit of exactly zero counts toward PBO, as the spec's `λ ≤ 0` says.
 - **M4, block length:** the default is the median Politis-White length over the columns. The gate uses one set of resamples for SPA and the stepdown.
 - **M4, `evaluate` needs at least nine observations for the snooping tests:** with fewer, `evaluate_trial_log` reports them as not computed.

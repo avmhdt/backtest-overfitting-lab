@@ -140,7 +140,7 @@ def validate_arch(
         arch_xcheck.write_report(rows, target)
         criteria = arch_xcheck.check_criteria(rows)
         run.metrics.update(criteria)
-    typer.echo(f"AC-W-07: {criteria} -> {target}")
+    typer.echo(f"arch evidence (AC-W-07 stays open): {criteria} -> {target}")
     if not arch_xcheck.passed(criteria):
         raise typer.Exit(code=1)
 
