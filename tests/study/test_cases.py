@@ -288,6 +288,8 @@ def test_project_with_a_valid_log(settings, tmp_path):
     assert row["n_clustered"] == 4
     assert row["dsr"] is not None
     assert row["pbo"] is not None
+    assert row["n_raw_project"] == 4
+    assert row["dsr_project_n"] == pytest.approx(row["dsr"])
     assert row["pbo_note"] is None
     assert (tmp_path / "reports/figures/own_projects_naive_vs_deflated.png").exists()
 
