@@ -12,6 +12,25 @@
 | Data cost | Free |
 | Strongest for | Any QR seat; pairs with every other project |
 
+## Quickstart
+
+```bash
+pip install overfitlab
+```
+
+```python
+import overfitlab as ol
+
+# A 2.5 annual Sharpe ratio over five years, the best of 100 trials.
+sr = 2.5 / 250**0.5
+result = ol.deflated_sharpe_ratio(
+    sr, 1250, n_trials=100, var_trials=0.5 / 250, skew=-3.0, kurtosis=10.0
+)
+print(round(result.dsr, 4))  # 0.9004
+```
+
+The [docs site](https://avmhdt.github.io/backtest-overfitting-lab/) has the guide, the API reference and a calculator.
+
 ## Requirements
 
 - [x] Purged k-fold with embargo and combinatorial purged CV (CPCV), handling overlapping multi-day labels. (FR-08, FR-09)

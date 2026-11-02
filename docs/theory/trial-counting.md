@@ -22,7 +22,7 @@ On five years of noise, reporting a single test implies a bar of zero. Admit to 
 
 Near-duplicates aren't independent, so the raw count can overstate the bar. `n_trials(mode="clustered")` estimates independent trials by clustering return correlations, with distance √((1 − ρ)/2) and the number of clusters chosen by the mean silhouette. It follows the idea of López de Prado and Lewis (2019).
 
-The headline uses raw N, which is conservative and needs no modelling (D-08), with clustered N beside it. One sibling project shows the gap: 20 logged trials cluster to 7.
+The headline uses raw N, which is conservative and needs no modelling (D-08), with clustered N beside it. In `equity-factor-pipeline`, the 32 trials of the low-risk family cluster to 2.
 
 ## What the count can't fix
 
