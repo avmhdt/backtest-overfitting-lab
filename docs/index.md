@@ -16,6 +16,7 @@ Every systematic researcher runs many backtests and reports the best. The best o
 ## Where to go
 
 - [Getting started](getting-started.md): install it and run a first check.
+- [Memo](memo.md): the argument and results in ten minutes.
 - [Calculator](calculator.md): deflate a Sharpe ratio in the browser.
 - [API reference](api.md).
 - [Trial-log contract](trial-log.md): the format the owner's other projects emit.

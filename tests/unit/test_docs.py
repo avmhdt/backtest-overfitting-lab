@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import inspect
 import re
 import runpy
@@ -105,3 +106,46 @@ def test_readme_quickstart_runs() -> None:
 def test_version_is_the_same_in_both_places() -> None:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
     assert project["project"]["version"] == overfitlab.__version__
+
+
+def test_memo_keeps_to_its_limits() -> None:
+    check = runpy.run_path(str(ROOT / "scripts" / "check_memo.py"))
+    assert check["problems"]((DOCS / "memo.md").read_text(encoding="utf-8")) == []
+
+
+def _table(name: str) -> list[dict[str, str]]:
+    path = ROOT / "reports" / "tables" / f"{name}.csv"
+    with path.open(encoding="utf-8", newline="") as fh:
+        return list(csv.DictReader(fh))
+
+
+@pytest.mark.parametrize("path", [ROOT / "README.md", DOCS / "memo.md"])
+def test_prose_quotes_the_current_tables(path: Path) -> None:
+    text = path.read_text(encoding="utf-8")
+    noise = {row["setting"]: row for row in _table("noise_experiment")}
+    stooq = _table("case_stooq")[0]
+    osap = {row["window"]: row for row in _table("case_osap")}
+    projects = [row for row in _table("own_projects") if row["verdict"]]
+    expected = [
+        f"{float(noise['independent']['median_best_sr_annual']):.2f}",
+        f"{float(noise['factory_gbm']['median_best_sr_annual']):.2f}",
+        f"Sharpe {float(stooq['naive_sr_annual']):.2f}",
+        f"DSR {float(stooq['dsr']):.2f}",
+        f"PBO {float(stooq['pbo']):.2f}",
+        f"N = {float(projects[0]['n_raw_project']):.0f}"
+        if path.name == "README.md"
+        else f"{float(projects[0]['n_raw_project']):.0f} trials",
+        f"{osap['post_publication']['t_above_1_96']} ",
+        f"{float(next(row for row in projects if row['family'] == 'investment')['dsr_project_n']):.3f}",
+    ]
+    for value in expected:
+        assert value in text, value
+    if path.name == "README.md":
+        for row in projects:
+            cells = (
+                f"| {row['family']} | {float(row['n_raw']):.0f} | "
+                f"{float(row['naive_sr_annual']):.2f} | {float(row['sr0_annual']):.2f} | "
+                f"{float(row['dsr']):.3f} | {row['verdict']} | "
+                f"{float(row['dsr_project_n']):.3f} |"
+            )
+            assert cells in text, cells
