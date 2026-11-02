@@ -151,7 +151,8 @@ def plot(rows: Sequence[dict[str, Any]], path: Path) -> None:
                 fontsize=9,
             )
     ax.set_yticks(positions, [labels[name] for name in names], color=INK)
-    ax.set_xlabel(f"Predictors, out of {by_window['all']['n_predictors']}", color=MUTED)
+    totals = [by_window[window]["n_predictors"] for window, _, _ in series]
+    ax.set_xlabel(f"Predictors, out of {totals[0]} and {totals[1]}", color=MUTED)
     ax.tick_params(colors=MUTED, length=0)
     ax.grid(axis="x", color=GRID, linewidth=0.8)
     ax.set_axisbelow(True)
