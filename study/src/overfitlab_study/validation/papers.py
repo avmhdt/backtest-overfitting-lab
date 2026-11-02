@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
 
+import numpy as np
 import yaml
 
 import overfitlab as ol
@@ -61,6 +62,11 @@ def _haircut(a: Inputs) -> dict[str, float]:
     }
 
 
+def _cpcv_counts(n_groups: int, n_test_groups: int) -> dict[str, float]:
+    cv = ol.CombinatorialPurgedCV(n_groups, n_test_groups, t1=np.arange(n_groups))
+    return {"n_splits": float(cv.n_splits), "n_paths": float(cv.n_paths)}
+
+
 FUNCTIONS: dict[str, Callable[[Inputs], Mapping[str, float]]] = {
     "dsr": _dsr,
     "minbtl": lambda a: {
@@ -83,6 +89,7 @@ FUNCTIONS: dict[str, Callable[[Inputs], Mapping[str, float]]] = {
     "mintrl_years": lambda a: {"years": _mintrl_obs(a) / a["periods_per_year"]},
     "haircut": _haircut,
     "lo_scale": lambda a: {"eta": ol.annualize_sharpe(1.0, a["q"], autocorr=a["rho"])},
+    "cpcv_counts": lambda a: _cpcv_counts(a["n_groups"], a["n_test_groups"]),
     "bonferroni_tstat": lambda a: {"tstat": upper_quantile(a["alpha"] / (2.0 * a["n_tests"]))},
     "tstat_pvalue_pct": lambda a: {"pvalue_pct": 200.0 * norm_sf(a["tstat"])},
 }

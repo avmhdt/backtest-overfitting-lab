@@ -27,8 +27,8 @@ def test_fails_outside_tolerance():
 
 
 def test_pending_case_never_passes():
-    pending = next(c for c in load_cases(GOLDEN) if c["status"] == "pending-source")
-    evaluated = evaluate_case(pending)
+    case = {**load_cases(GOLDEN)[0], "status": "pending-source", "printed": None}
+    evaluated = evaluate_case(case)
     assert evaluated.computed is None
     assert not evaluated.passed
 
