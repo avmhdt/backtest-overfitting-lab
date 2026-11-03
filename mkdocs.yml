@@ -48,5 +48,7 @@ nav:
       - Trial counting: theory/trial-counting.md
   - Trial-log contract: trial-log.md
   - Validation: validation.md
+  - Trial logs in practice: projects.md
+  - Project criteria: criteria.md
   - Benchmarks: benchmarks.md
   - Decisions: decisions.md

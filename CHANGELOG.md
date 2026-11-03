@@ -2,6 +2,19 @@
 
 All notable changes to `overfitlab` are recorded here. Versions follow [semantic versioning](https://semver.org/).
 
+## 0.1.1 (2026-11-03)
+
+README only, so the PyPI page reads as a package description. The code is unchanged.
+
+### Changed
+
+- The title names the package.
+- The data table states that Sharadar is a paid subscription and no longer breaks around the AQR note.
+- The per-family trial-log table moved to the docs site's [trial logs in practice](https://avmhdt.github.io/backtest-overfitting-lab/projects/) page.
+- The project checklists moved to the docs site's [project criteria](https://avmhdt.github.io/backtest-overfitting-lab/criteria/) page.
+- "What failed" describes each item in plain words, without internal ids.
+- "How to reproduce" says it needs the GitHub repository, because `olab-study` isn't in the PyPI package.
+
 ## 0.1.0 (2026-11-03)
 
 First release, published to [PyPI](https://pypi.org/project/overfitlab/0.1.0/) from tag `v0.1.0` on commit `c612356`.
