@@ -54,7 +54,7 @@ We then ran three kinds of experiment: simulations with known truth, public data
 
 ![OSAP predictors at each hurdle](assets/figures/osap_hurdles.png)
 
-**Our own work.** These numbers are provisional, because the `equity-factor-pipeline` log is being rebuilt and has changed between runs. It's the only one of six projects with a log. Of its eight families, `investment`, `low_risk` and `quality` pass when each is judged on its own trials, with DSRs of 0.952, 0.957 and 0.951. But the project ran 613 trials. At that count their DSRs fall to 0.429, 0.734 and 0.678, and none passes. `investment` fails outright: the bar of 1.03 exceeds its Sharpe ratio of 1.00.
+**Our own work.** `equity-factor-pipeline` is the only one of six projects with a trial log. Of its eight families, `investment`, `low_risk` and `quality` pass when each is judged on its own trials, with DSRs of 0.952, 0.957 and 0.951. But the project ran 613 trials. At that count their DSRs fall to 0.429, 0.734 and 0.678, and none passes. `investment` fails outright: the bar of 1.03 exceeds its Sharpe ratio of 1.00.
 
 ![Naive Sharpe against the bar, by family](assets/figures/own_projects_naive_vs_deflated.png)
 
@@ -75,6 +75,6 @@ Neither count is simply right. If the families were separate ideas, each own cou
 - **N is a lower bound.** A log records what ran, not what was considered, or what a borrowed idea had already been through.
 - **Benchmarks are zero.** A long-only strategy can pass the bootstrap tests on the equity premium alone.
 - **Post-publication samples are shorter.** Fewer survivors partly reflects less data, so the drop isn't all decay.
-- **Coverage is thin.** One of six projects has a trial log, and its numbers are provisional.
+- **Coverage is thin.** One of six projects has a trial log.
 - **Validation has gaps.** One paper example misses by 5e-6, and one of 20 cross-check cases differs because the reference has no floor when no strategy has a positive mean. Both are documented on the [validation page](validation.md).
 - **Power curves assume independence,** with one planted signal among otherwise null strategies.

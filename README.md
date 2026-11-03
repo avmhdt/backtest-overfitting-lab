@@ -73,7 +73,7 @@ Detection takes a long record. With a true Sharpe ratio of 1 among 100 trials, t
 
 ### The owner's own trials
 
-**These numbers are provisional.** The `equity-factor-pipeline` log is being rebuilt, and it has changed between runs. Only one of the six projects has a log so far.
+Only one of the six projects, `equity-factor-pipeline`, has a trial log so far.
 
 | Family | Own N | Sharpe | SR₀ | DSR | Verdict | DSR at N = 613 |
 |---|---:|---:|---:|---:|---|---:|
