@@ -17,5 +17,5 @@ First release, published to [PyPI](https://pypi.org/project/overfitlab/0.1.0/) f
 - Synthetic data with known truth, and a strategy factory of crossover, breakout and mean-reversion variants.
 - Verdict gate: `evaluate`, which requires the DSR, PBO, SPA, StepM and the haircut to pass together.
 - Trial-log contract v1.0: `TrialLogger`, `read_trial_log`, `validate_trial_log` and `evaluate_trial_log`.
-- The `overfitlab` command line: `psr`, `dsr`, `mintrl`, `minbtl`, `haircut`, `pbo`, and `trials validate`, `trials report` and `trials add-manual`.
+- The `overfitlab` command line: `psr`, `dsr`, `mintrl`, `minbtl`, `haircut`, `pbo`, `snoop`, and `trials validate`, `trials report` and `trials add-manual`.
 - Docs site with theory pages, the API reference, a Sharpe-haircut calculator and the research memo.
