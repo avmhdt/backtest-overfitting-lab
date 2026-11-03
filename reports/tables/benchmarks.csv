@@ -1,7 +1,7 @@
 requirement,case,seconds,target_s,met,cpu,cores,ram_gb,os,python,numba
-NFR-01,"pbo_cscv, T = 1,260, N = 1,000, S = 16",0.390725,10,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
-NFR-02,"reality_check, T = 1,260, N = 1,000, B = 1,000",0.154106,60,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
-NFR-02,"spa_test, T = 1,260, N = 1,000, B = 1,000",0.231623,60,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
-NFR-02,"romano_wolf_stepdown, T = 1,260, N = 1,000, B = 1,000",0.227553,120,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
-NFR-03,"run_strategies, 1,034 variants, 5,000 bars",0.0962363,5,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
-NFR-03,first-call JIT compile,2.33989,30,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
+NFR-01,"pbo_cscv, T = 1,260, N = 1,000, S = 16",0.396003,10,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
+NFR-02,"reality_check, T = 1,260, N = 1,000, B = 1,000",0.14995,60,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
+NFR-02,"spa_test, T = 1,260, N = 1,000, B = 1,000",0.230048,60,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
+NFR-02,"romano_wolf_stepdown, T = 1,260, N = 1,000, B = 1,000",0.228422,120,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
+NFR-03,"run_strategies, 1,034 variants, 5,000 bars",0.0996484,5,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
+NFR-03,first-call JIT compile,2.45296,30,true,"Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",32,127.7,Windows-11-10.0.26200-SP0,3.12.10,0.68.1
