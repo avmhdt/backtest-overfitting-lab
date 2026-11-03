@@ -38,6 +38,8 @@ Raw and licensed data live in `data/`, which is git-ignored. Only download scrip
 | Synthetic returns (GBM, block bootstrap) | Free | Ground truth for validating every test. |
 | [Stooq bulk daily data](https://stooq.com/db/h/) and Sharadar | Free, and the owner's bundle | Daily prices for 12 ETFs, 2006 to 2026. |
 | [Ken French data library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html) and [AQR datasets](https://www.aqr.com/Insights/Datasets) | Free | 56 long factor histories for multiple-testing case studies. |
+
+AQR data: Century of Factor Premia, Time Series Momentum, Betting Against Beta and Quality Minus Junk, from [AQR Capital Management](https://www.aqr.com/Insights/Datasets), used with AQR's written permission. This repository publishes aggregate statistics and charts only, not AQR's files or series.
 | [Open Source Asset Pricing](https://www.openassetpricing.com) | Free | A real "many signals" universe of 212 predictors, release 2026.10. |
 
 ## Method
@@ -63,7 +65,7 @@ Each method is checked three ways: against the papers' printed examples, against
 | 1,034 factory variants on noise | Median best Sharpe 1.13. DSR significant in 0 seeds. Median PBO 0.52. |
 | Leakage on noise, 20-day labels | Shuffled k-fold accuracy 0.703, purged 0.495. Gap 0.208. |
 | Factory on 12 ETFs, 1,034 trials | Sharpe 0.76 against a bar of 0.83. DSR 0.39, PBO 0.31, verdict FAIL. Holdout Sharpe 0.68. |
-| 56 factors | 30 survive StepM. |
+| 56 factors from Ken French and AQR | 30 survive StepM. |
 | 212 OSAP predictors, full history | 173 at t > 1.96, 134 at t > 3, 149 after BHY, 96 after StepM. |
 | 208 OSAP predictors, after publication | 54 at t > 1.96, 24 at t > 3, 9 after BHY, 8 after StepM. |
 
