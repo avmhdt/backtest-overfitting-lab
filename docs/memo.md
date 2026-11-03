@@ -50,7 +50,7 @@ We then ran three kinds of experiment: simulations with known truth, public data
 
 **A real search.** The factory on 12 ETFs selected a moving-average rule with a Sharpe ratio of 0.76. The bar from 1,034 trials is 0.83, the DSR is 0.39, and the verdict is FAIL. Its holdout Sharpe ratio is 0.68. So the strategy may well make money, but the backtest can't show it beat luck. SPA and the stepdown do reject here, because they test against zero and a long-only strategy has the equity premium behind it.
 
-**The factor zoo.** Of 212 predictors over their full histories, 173 clear t > 1.96 and 96 survive the stepdown. After publication, 54 of 208 clear t > 1.96, 24 clear t > 3, and 8 survive. Across 56 long French and AQR factors, 30 survive.
+**The factor zoo.** Of 212 predictors over their full histories, 173 clear t > 1.96 and 96 survive the stepdown. After publication, 54 of 208 clear t > 1.96, 24 clear t > 3, and 8 survive. Across the 3 French factors since 1926, all 3 survive.
 
 ![OSAP predictors at each hurdle](assets/figures/osap_hurdles.png)
 
@@ -64,7 +64,7 @@ Neither count is simply right. If the families were separate ideas, each own cou
 
 - **Ask for N and V before the Sharpe ratio.** A number without its search can't be judged. A trial log costs almost nothing, and a log kept by hand always undercounts.
 - **Decide what a family is before looking.** As our own table shows, this choice can decide the verdict, so it should be fixed in advance.
-- **Discount the backtest by the bar and not by a rule of thumb.** A flat 50% haircut is too harsh on strong results and too kind to weak ones. The haircut on our factory is about half, and on our strongest factor it's 7%.
+- **Discount the backtest by the bar and not by a rule of thumb.** A flat 50% haircut is too harsh on strong results and too kind to weak ones. The haircut on our factory is about half, and on the market factor since 1926 it's 10%.
 - **Budget for time.** A Sharpe ratio of 1 can take decades to prove from a wide search. Pre-registering fewer ideas buys more than a longer search does.
 - **Use a holdout, once.** PBO reads near 0 for an edge that died halfway through, and only fresh data catches that.
 - **Treat a pass as a failure to reject luck, and not as proof of an edge.** A failure doesn't prove there's no edge either, as the factory's holdout shows.

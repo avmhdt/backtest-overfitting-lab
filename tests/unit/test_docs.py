@@ -17,6 +17,10 @@ import overfitlab
 
 ROOT = Path(__file__).parents[2]
 DOCS = ROOT / "docs"
+AQR_WITHHELD = (
+    "Results from AQR's factor data are withheld until AQR gives written permission "
+    "to publish them."
+)
 
 
 def _public_functions() -> list[str]:
@@ -139,6 +143,12 @@ def test_prose_quotes_the_current_tables(path: Path) -> None:
         f"{osap['post_publication']['t_above_1_96']} ",
         f"{float(investment['dsr_project_n']):.3f}",
     ]
+    factors = _table("case_factors")
+    survivors = sum(row["stepm_rejected"] == "true" for row in factors)
+    expected.append(f"{len(factors)} French factors")
+    expected.append(f"{survivors} survive")
+    assert all(row["factor"].startswith("french/") for row in factors)
+    assert "aqr" not in text.replace(AQR_WITHHELD, "").lower()
     for value in expected:
         assert value in text, value
     if path.name == "README.md":

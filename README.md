@@ -37,7 +37,7 @@ Raw and licensed data live in `data/`, which is git-ignored. Only download scrip
 |---|---|---|
 | Synthetic returns (GBM, block bootstrap) | Free | Ground truth for validating every test. |
 | [Stooq bulk daily data](https://stooq.com/db/h/) and Sharadar | Free, and the owner's bundle | Daily prices for 12 ETFs, 2006 to 2026. |
-| [Ken French data library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html) and [AQR datasets](https://www.aqr.com/Insights/Datasets) | Free | 56 long factor histories for multiple-testing case studies. |
+| [Ken French data library](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html) | Free | Market, size and value factors since 1926, for a multiple-testing case study. |
 | [Open Source Asset Pricing](https://www.openassetpricing.com) | Free | A real "many signals" universe of 212 predictors, release 2026.10. |
 
 ## Method
@@ -63,7 +63,7 @@ Each method is checked three ways: against the papers' printed examples, against
 | 1,034 factory variants on noise | Median best Sharpe 1.13. DSR significant in 0 seeds. Median PBO 0.52. |
 | Leakage on noise, 20-day labels | Shuffled k-fold accuracy 0.703, purged 0.495. Gap 0.208. |
 | Factory on 12 ETFs, 1,034 trials | Sharpe 0.76 against a bar of 0.83. DSR 0.39, PBO 0.31, verdict FAIL. Holdout Sharpe 0.68. |
-| 56 factors | 30 survive StepM. |
+| 3 French factors, 1926 to 2026 | All 3 survive StepM. |
 | 212 OSAP predictors, full history | 173 at t > 1.96, 134 at t > 3, 149 after BHY, 96 after StepM. |
 | 208 OSAP predictors, after publication | 54 at t > 1.96, 24 at t > 3, 9 after BHY, 8 after StepM. |
 
@@ -98,6 +98,7 @@ Three families pass when each is judged alone. They were not found alone: the pr
 
 ## Limitations
 
+- Results from AQR's factor data are withheld until AQR gives written permission to publish them.
 - A trial log records what was run, not what was thought about, so N is a lower bound.
 - The tests here compare with zero. A long-only ETF strategy can beat zero on the equity premium alone, which is why the factory case passes SPA and StepM and still fails the DSR.
 - Fewer predictors survive after publication partly because those samples are shorter, so that drop isn't all decay.
