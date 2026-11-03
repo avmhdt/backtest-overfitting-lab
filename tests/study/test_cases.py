@@ -160,6 +160,15 @@ def test_factor_case(tmp_path):
     assert (tmp_path / "reports/tables/case_factors.csv").exists()
 
 
+def test_factor_case_runs_on_french_alone(tmp_path):
+    folder = tmp_path / "processed"
+    write_factor(folder, "french", factors.FRENCH_MONTHLY, ["Mkt-RF", "SMB", "HML", "RF"])
+    summary = factors.run(aqr_datasets=[], processed_dir=folder, reports_dir=tmp_path / "reports")
+    assert summary["factors"] == 3
+    table = (tmp_path / "reports/tables/case_factors.csv").read_text(encoding="utf-8")
+    assert "aqr" not in table
+
+
 def test_bhy_by_hand():
     # c = 1 + 1/2 + 1/3 = 11/6: limits are 0.0091, 0.0182 and 0.0273 at q = 0.05.
     assert osap.bhy_rejections(np.array([0.005, 0.015, 0.9])) == 2

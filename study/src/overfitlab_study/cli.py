@@ -199,9 +199,14 @@ def case_stooq() -> None:
 
 @case_app.command("factors")
 def case_factors() -> None:
-    """StepM survivors and haircuts across French and AQR factors."""
+    """StepM survivors and haircuts across French factors, and AQR's when permitted."""
     settings = Settings()
-    datasets = [item["dataset"] for item in load_universe()["aqr"]]
+    universe = load_universe()
+    datasets = (
+        [item["dataset"] for item in universe["aqr"]]
+        if universe.get("aqr_in_case_studies", False)
+        else []
+    )
     with study_run("case factors", settings, params={"aqr": datasets}) as run:
         summary = case_factors_module.run(
             aqr_datasets=datasets,

@@ -29,6 +29,9 @@ french:
     - 49_Industry_Portfolios_daily
     - F-F_Research_Data_Factors
 
+# AQR's terms bar publishing its data without written consent. `data aqr` still ingests these
+# files locally, but the factors case leaves them out until AQR gives permission.
+aqr_in_case_studies: false
 aqr:
   - {dataset: century, file: Century of Factor Premia Monthly.xlsx, sheet: Century of Factor Premia}
   - {dataset: tsmom, file: Time Series Momentum Factors Monthly.xlsx, sheet: TSMOM Factors}
