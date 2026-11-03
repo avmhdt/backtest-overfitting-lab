@@ -158,6 +158,7 @@ def test_plots_are_written(tmp_path):
                 rows += rows_for({0.0: 0.05, 1.0: 0.5, 2.0: 0.9}, test, years, n_trials)
     power.plot(rows, tmp_path / "figures" / "power.png", ["dsr", "rc"])
     power.plot_html(rows, tmp_path / "docs" / "power.html", ["dsr", "rc"])
+    assert b"\r\n" not in (tmp_path / "docs" / "power.html").read_bytes()
     assert (tmp_path / "figures" / "power.png").stat().st_size > 1000
     assert "plotly" in (tmp_path / "docs" / "power.html").read_text("utf-8").lower()
 
