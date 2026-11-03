@@ -133,20 +133,24 @@ def test_prose_quotes_the_current_tables(path: Path) -> None:
         f"Sharpe {float(stooq['naive_sr_annual']):.2f}",
         f"DSR {float(stooq['dsr']):.2f}",
         f"PBO {float(stooq['pbo']):.2f}",
-        f"N = {float(projects[0]['n_raw_project']):.0f}"
-        if path.name == "README.md"
-        else f"{float(projects[0]['n_raw_project']):.0f} trials",
+        f"{float(projects[0]['n_raw_project']):.0f} trials",
         f"{osap['post_publication']['t_above_1_96']} ",
-        f"{float(investment['dsr_project_n']):.3f}",
     ]
+    if path.name == "memo.md":
+        expected.append(f"{float(investment['dsr_project_n']):.3f}")
     for value in expected:
         assert value in text, value
-    if path.name == "README.md":
-        for row in projects:
-            cells = (
-                f"| {row['family']} | {float(row['n_raw']):.0f} | "
-                f"{float(row['naive_sr_annual']):.2f} | {float(row['sr0_annual']):.2f} | "
-                f"{float(row['dsr']):.3f} | {row['verdict']} | "
-                f"{float(row['dsr_project_n']):.3f} |"
-            )
-            assert cells in text, cells
+
+
+def test_projects_page_quotes_the_current_table() -> None:
+    text = (DOCS / "projects.md").read_text(encoding="utf-8")
+    projects = [row for row in _table("own_projects") if row["verdict"]]
+    assert f"DSR at N = {float(projects[0]['n_raw_project']):.0f}" in text
+    for row in projects:
+        cells = (
+            f"| {row['family']} | {float(row['n_raw']):.0f} | "
+            f"{float(row['naive_sr_annual']):.2f} | {float(row['sr0_annual']):.2f} | "
+            f"{float(row['dsr']):.3f} | {row['verdict']} | "
+            f"{float(row['dsr_project_n']):.3f} |"
+        )
+        assert cells in text, cells

@@ -1,6 +1,6 @@
 [project]
 name = "overfitlab"
-version = "0.1.0"
+version = "0.1.1"
 description = "Statistics that separate a real trading signal from a lucky one: PSR, DSR, PBO, purged CV and data-snooping tests."
 readme = "README.md"
 license = "MIT"

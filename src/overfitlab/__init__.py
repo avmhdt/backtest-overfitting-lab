@@ -56,7 +56,7 @@ from overfitlab.triallog import (
 )
 from overfitlab.verdict import VerdictConfig, VerdictReport, evaluate
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 __all__ = [
     "EULER_GAMMA",
