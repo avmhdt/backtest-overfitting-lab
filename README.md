@@ -138,7 +138,7 @@ The full run takes about an hour and regenerates every table and figure from the
 
 - [x] Power curves: how large a true Sharpe, and how long a backtest, each test needs before it detects a signal. (AC-H-01)
 - [ ] A table of naive vs deflated Sharpe for your own projects ([equity-factor-pipeline](https://github.com/avmhdt/equity-factor-pipeline), [llm-text-alpha](https://github.com/avmhdt/llm-text-alpha), [stat-arb-pairs](https://github.com/avmhdt/stat-arb-pairs)). (AC-H-02: one of six projects so far)
-- [ ] Packaged as a pip-installable library with docs and an interactive Sharpe-haircut page. (AC-H-03: docs and calculator are live, and the install from PyPI comes with the first release)
+- [x] Packaged as a pip-installable library with docs and an interactive Sharpe-haircut page. (AC-H-03)
 - [x] A short paper-style writeup a PM could read in ten minutes. (AC-H-04)
 
 ## Questions this project must answer
